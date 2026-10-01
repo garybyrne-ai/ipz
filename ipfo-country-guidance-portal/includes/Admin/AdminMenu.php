@@ -24,34 +24,6 @@ final class AdminMenu {
 	public function register(): void {
 		add_action( 'admin_menu', [ $this, 'build_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_action( 'admin_notices', [ $this, 'ipfo_temp_diagnostic' ] );
-	}
-
-	/**
-	 * TEMPORARY diagnostic — remove before final release. Prints an
-	 * always-visible notice (no capability gate) on every wp-admin page so we
-	 * can see exactly what current_user_can() returns for our capability at
-	 * request time, independent of whether the menu itself renders.
-	 */
-	public function ipfo_temp_diagnostic(): void {
-		global $wp_filter, $current_user;
-
-		$cap    = Capabilities::MANAGE_PORTAL;
-		$direct = current_user_can( $cap );
-		$in_allcaps = isset( $current_user->allcaps[ $cap ] ) ? ( $current_user->allcaps[ $cap ] ? 'true' : 'false' ) : 'NOT SET';
-		$roles  = implode( ',', (array) ( $current_user->roles ?? [] ) );
-		$has_filter = isset( $wp_filter['user_has_cap'] ) ? count( $wp_filter['user_has_cap']->callbacks ?? [] ) : 0;
-		$map_meta_filter = isset( $wp_filter['map_meta_cap'] ) ? count( $wp_filter['map_meta_cap']->callbacks ?? [] ) : 0;
-
-		printf(
-			'<div class="notice notice-info"><p><strong>IPFO DIAGNOSTIC</strong> — current_user_can(%1$s): %2$s | allcaps[%1$s]: %3$s | roles: %4$s | user_has_cap filter groups: %5$d | map_meta_cap filter groups: %6$d</p></div>',
-			esc_html( $cap ),
-			$direct ? 'TRUE' : 'FALSE',
-			esc_html( $in_allcaps ),
-			esc_html( $roles ),
-			(int) $has_filter,
-			(int) $map_meta_filter
-		);
 	}
 
 	public function build_menu(): void {
