@@ -1,0 +1,47 @@
+/**
+ * IPFO Country Guidance Portal — brand tokens.
+ *
+ * These values are copied directly from the live ipfertilityoptions.com
+ * UiCore Pro / Elementor global kit (wp-content/uploads/uicore-global.css,
+ * Elementor Kit #6) so the portal inherits the site's real design system
+ * rather than an invented palette. If the site's Elementor global colours
+ * or typography are ever changed, update the matching values below.
+ */
+:root {
+	/* Colours — copied from --e-global-color-uicore_* / --uicore-*-color */
+	--ipfo-primary: #7F448A;
+	--ipfo-secondary: #5F226B;
+	--ipfo-accent: #EEC7FF;
+	--ipfo-dark-accent: #FF64BB;
+	--ipfo-headline: #100A05;
+	--ipfo-text: #4C4C4C;
+	--ipfo-light: #F5F6FF;
+	--ipfo-white: #FFFFFF;
+	--ipfo-border: #ebebeb;
+	--ipfo-success: #2E7D4F;
+	--ipfo-warning: #B8860B;
+	--ipfo-danger: #C0392B;
+
+	/* Typography — copied from --uicore-typography--* / --uicore-*-font-family */
+	--ipfo-font-heading: 'Blinker', sans-serif;
+	--ipfo-font-body: 'Manrope', sans-serif;
+	--ipfo-font-accent: 'Abel', sans-serif;
+
+	/* Shape & elevation — copied from --ui-radius / --ui-radius-sm */
+	--ipfo-radius: 12px;
+	--ipfo-radius-sm: 6px;
+	--ipfo-shadow: 0 10px 30px rgba(16, 10, 5, 0.08);
+	--ipfo-shadow-hover: 0 16px 40px rgba(16, 10, 5, 0.12);
+
+	/* Layout — copied from --ui-container-size */
+	--ipfo-container: 1216px;
+}
+
+/* Dark reading mode for the digital booklet only (scoped, opt-in). */
+.ipfo-portal[data-ipfo-theme="dark"] {
+	--ipfo-white: #1B1620;
+	--ipfo-light: #241D2B;
+	--ipfo-headline: #F5F6FF;
+	--ipfo-text: #D8D2E0;
+	--ipfo-border: #352C3E;
+}
