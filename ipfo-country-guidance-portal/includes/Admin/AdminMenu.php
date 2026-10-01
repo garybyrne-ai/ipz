@@ -29,14 +29,16 @@ final class AdminMenu {
 	public function build_menu(): void {
 		$cap = Capabilities::MANAGE_PORTAL;
 
+		// No explicit menu position: a fixed integer position (e.g. 30) can collide
+		// with another active plugin's menu at the same slot, silently dropping
+		// one of the two from $menu with no error. Omitting it appends safely.
 		add_menu_page(
 			__( 'IPFO Guidance Portal', 'ipfo-country-guidance-portal' ),
 			__( 'IPFO Portal', 'ipfo-country-guidance-portal' ),
 			$cap,
 			self::SLUG,
 			[ new DashboardPage(), 'render' ],
-			'dashicons-shield',
-			30
+			'dashicons-shield'
 		);
 
 		add_submenu_page( self::SLUG, __( 'Dashboard', 'ipfo-country-guidance-portal' ), __( 'Dashboard', 'ipfo-country-guidance-portal' ), $cap, self::SLUG, [ new DashboardPage(), 'render' ] );

@@ -55,6 +55,7 @@ final class Plugin {
 		$this->register_security_hooks();
 		$this->register_privacy();
 		$this->register_cron();
+		$this->register_capability_sync();
 	}
 
 	private function register_post_types(): void {
@@ -113,6 +114,20 @@ final class Plugin {
 	private function register_cron(): void {
 		add_action( 'ipfo_daily_maintenance', static function (): void {
 			( new InvitationService() )->run_daily_maintenance();
+		} );
+	}
+
+	/**
+	 * Self-healing safety net: Capabilities::install() already runs on
+	 * activation, but re-checking (cheaply — a has_cap() guard, no write in
+	 * the common case) on admin_init protects against the admin role never
+	 * having received manage_ipfo_portal, e.g. if the plugin directory was
+	 * placed on the server without going through a clean WordPress
+	 * activate/deactivate transition.
+	 */
+	private function register_capability_sync(): void {
+		add_action( 'admin_init', static function (): void {
+			Capabilities::install();
 		} );
 	}
 }
