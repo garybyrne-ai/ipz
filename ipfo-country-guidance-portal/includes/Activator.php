@@ -15,11 +15,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Activator {
 
+	/**
+	 * No current_user_can() guard here: WordPress core already verifies
+	 * activation permission before ever invoking a plugin's activation
+	 * hook (the admin UI checks it before calling activate_plugin()), so
+	 * this callback can assume it's authorised. Re-checking it here was a
+	 * real bug — confirmed locally with WP-CLI, which activates plugins
+	 * with no "current user" in context, so current_user_can() always
+	 * returned false and silently skipped everything below this line
+	 * (seeding default options, scheduling the maintenance cron) despite
+	 * `wp plugin activate` reporting success and Schema::install() having
+	 * already run moments earlier via a different code path.
+	 */
 	public static function activate(): void {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			return;
-		}
-
 		Schema::install();
 		Capabilities::install();
 
