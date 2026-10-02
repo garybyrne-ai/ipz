@@ -13,18 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Capabilities {
 
 	/**
-	 * Gates every portal-management screen/CPT. Deliberately WordPress's own
-	 * built-in `manage_options` rather than a custom capability string: some
-	 * security-hardening plugins (confirmed on ipfertilityoptions.com, likely
-	 * Sucuri's hardening) hook the `user_has_cap` filter and silently strip
-	 * any capability they don't recognise from current_user_can() checks —
-	 * even though it's correctly present in the role's raw allcaps. A custom
-	 * capability would then only ever evaluate to true in raw capability
-	 * dumps (e.g. the REST API's /users/me response) but false everywhere
-	 * current_user_can() is actually used to gate access, including
-	 * add_menu_page()/add_submenu_page() themselves. manage_options is a
-	 * core capability no hardening plugin can safely filter out without
-	 * breaking wp-admin itself, so it is immune to this class of conflict.
+	 * Gates every portal-management screen/CPT. Uses WordPress's own
+	 * built-in `manage_options` rather than a custom capability string, so
+	 * every Administrator has it with zero setup and no dependency on our
+	 * own role-sync code ever having run. (The admin menu being
+	 * unreachable despite a correctly-granted custom capability was
+	 * ultimately traced to the CPT capability arrays, not this constant —
+	 * see the comment on Capabilities::cpt_capabilities() — but
+	 * manage_options remains the simpler, more conventional choice.)
 	 */
 	public const MANAGE_PORTAL  = 'manage_options';
 
@@ -63,5 +59,43 @@ final class Capabilities {
 
 	public static function current_user_can_access_portal(): bool {
 		return is_user_logged_in() && current_user_can( self::ACCESS_PORTAL ) || self::current_user_can_manage();
+	}
+
+	/**
+	 * Primitive-only capability map for a map_meta_cap => true custom post
+	 * type. Deliberately never sets 'edit_post', 'read_post' or
+	 * 'delete_post' (the meta caps): doing so makes WordPress treat our own
+	 * capability string as if it were the meta-cap's registered name
+	 * rather than its resolved value. Core code that probes a meta cap
+	 * generically — with no specific post ID — then trips
+	 * map_meta_cap()'s own "you must always check it against a specific
+	 * post" _doing_it_wrong() guard on every single admin page load
+	 * (confirmed via wp-content/debug.log in local testing: hundreds of
+	 * these per page load, present only while this plugin was active).
+	 * The practical, reproducible symptom was worse than a stray notice:
+	 * the "IPFO Portal" admin menu never appeared and visiting it
+	 * directly gave "Sorry, you are not allowed to access this page.",
+	 * even though current_user_can() on the gating capability reported
+	 * true everywhere else. Supplying only primitive caps lets
+	 * WordPress's own map_meta_cap() implementation derive the meta caps
+	 * correctly, which is what the register_post_type() documentation
+	 * itself recommends.
+	 */
+	public static function cpt_capabilities(): array {
+		$cap = self::MANAGE_PORTAL;
+
+		return [
+			'edit_posts'             => $cap,
+			'edit_others_posts'      => $cap,
+			'edit_private_posts'     => $cap,
+			'edit_published_posts'   => $cap,
+			'publish_posts'          => $cap,
+			'read_private_posts'     => $cap,
+			'delete_posts'           => $cap,
+			'delete_others_posts'    => $cap,
+			'delete_private_posts'   => $cap,
+			'delete_published_posts' => $cap,
+			'create_posts'           => $cap,
+		];
 	}
 }

@@ -29,6 +29,16 @@ final class AdminMenu {
 	public function build_menu(): void {
 		$cap = Capabilities::MANAGE_PORTAL;
 
+		// Same instance reused for both calls below: add_menu_page() and the
+		// first add_submenu_page() share the exact same slug (the documented
+		// way to rename that auto-created first submenu item), which makes
+		// WordPress register them as the same page hook. Passing two
+		// *different* `new DashboardPage()` instances meant WP's callback
+		// deduping (keyed by spl_object_hash for object-method callbacks)
+		// treated them as distinct, so the hook — and the whole dashboard —
+		// rendered twice on every load.
+		$dashboard = new DashboardPage();
+
 		// No explicit menu position: a fixed integer position (e.g. 30) can collide
 		// with another active plugin's menu at the same slot, silently dropping
 		// one of the two from $menu with no error. Omitting it appends safely.
@@ -37,11 +47,11 @@ final class AdminMenu {
 			__( 'IPFO Portal', 'ipfo-country-guidance-portal' ),
 			$cap,
 			self::SLUG,
-			[ new DashboardPage(), 'render' ],
+			[ $dashboard, 'render' ],
 			'dashicons-shield'
 		);
 
-		add_submenu_page( self::SLUG, __( 'Dashboard', 'ipfo-country-guidance-portal' ), __( 'Dashboard', 'ipfo-country-guidance-portal' ), $cap, self::SLUG, [ new DashboardPage(), 'render' ] );
+		add_submenu_page( self::SLUG, __( 'Dashboard', 'ipfo-country-guidance-portal' ), __( 'Dashboard', 'ipfo-country-guidance-portal' ), $cap, self::SLUG, [ $dashboard, 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Countries', 'ipfo-country-guidance-portal' ), __( 'Countries', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-countries', [ new CountriesPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Invitations', 'ipfo-country-guidance-portal' ), __( 'Invitations', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-invitations', [ new InvitationsPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Users & Access', 'ipfo-country-guidance-portal' ), __( 'Users & Access', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-users-access', [ new UsersAccessPage(), 'render' ] );

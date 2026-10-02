@@ -46,29 +46,10 @@ final class GuideChapterCPT {
 				'hierarchical'        => false,
 				'supports'            => [ 'title', 'editor', 'page-attributes', 'revisions' ],
 				'capability_type'     => [ 'ipfo_chapter', 'ipfo_chapters' ],
-				'capabilities'        => $this->capabilities(),
+				'capabilities'        => Capabilities::cpt_capabilities(),
 				'map_meta_cap'        => true,
 			]
 		);
-	}
-
-	private function capabilities(): array {
-		$cap = Capabilities::MANAGE_PORTAL;
-
-		return [
-			'edit_post'              => $cap,
-			'read_post'              => $cap,
-			'delete_post'            => $cap,
-			'edit_posts'             => $cap,
-			'edit_others_posts'      => $cap,
-			'publish_posts'          => $cap,
-			'read_private_posts'     => $cap,
-			'delete_posts'           => $cap,
-			'delete_others_posts'    => $cap,
-			'delete_published_posts' => $cap,
-			'edit_published_posts'   => $cap,
-			'create_posts'           => $cap,
-		];
 	}
 
 	/**

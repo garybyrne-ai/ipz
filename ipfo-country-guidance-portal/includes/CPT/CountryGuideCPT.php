@@ -26,8 +26,6 @@ final class CountryGuideCPT {
 	}
 
 	public function register_post_type(): void {
-		$caps = $this->capabilities();
-
 		register_post_type(
 			self::SLUG,
 			[
@@ -50,28 +48,9 @@ final class CountryGuideCPT {
 				'menu_icon'           => 'dashicons-book-alt',
 				'supports'            => [ 'title', 'editor', 'thumbnail', 'author', 'revisions' ],
 				'capability_type'     => [ 'ipfo_guide', 'ipfo_guides' ],
-				'capabilities'        => $caps,
+				'capabilities'        => Capabilities::cpt_capabilities(),
 				'map_meta_cap'        => true,
 			]
 		);
-	}
-
-	private function capabilities(): array {
-		$cap = Capabilities::MANAGE_PORTAL;
-
-		return [
-			'edit_post'              => $cap,
-			'read_post'              => $cap,
-			'delete_post'            => $cap,
-			'edit_posts'             => $cap,
-			'edit_others_posts'      => $cap,
-			'publish_posts'          => $cap,
-			'read_private_posts'     => $cap,
-			'delete_posts'           => $cap,
-			'delete_others_posts'    => $cap,
-			'delete_published_posts' => $cap,
-			'edit_published_posts'   => $cap,
-			'create_posts'           => $cap,
-		];
 	}
 }
