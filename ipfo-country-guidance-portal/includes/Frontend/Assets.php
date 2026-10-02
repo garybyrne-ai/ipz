@@ -68,7 +68,7 @@ final class Assets {
 			return false;
 		}
 
-		foreach ( ShortcodeManager::TAGS as $tag ) {
+		foreach ( array_keys( ShortcodeManager::TAGS ) as $tag ) {
 			if ( has_shortcode( (string) $post->post_content, $tag ) ) {
 				return true;
 			}
