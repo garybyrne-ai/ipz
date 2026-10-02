@@ -29,21 +29,21 @@ final class Assets {
 			'ipfo-variables',
 			IPFO_PLUGIN_URL . 'assets/css/ipfo-variables.css',
 			[],
-			IPFO_VERSION
+			ipfo_asset_version( 'assets/css/ipfo-variables.css' )
 		);
 
 		wp_enqueue_style(
 			'ipfo-portal',
 			IPFO_PLUGIN_URL . 'assets/css/ipfo-portal.css',
 			[ 'ipfo-variables' ],
-			IPFO_VERSION
+			ipfo_asset_version( 'assets/css/ipfo-portal.css' )
 		);
 
 		wp_enqueue_script(
 			'ipfo-portal',
 			IPFO_PLUGIN_URL . 'assets/js/ipfo-portal.js',
 			[],
-			IPFO_VERSION,
+			ipfo_asset_version( 'assets/js/ipfo-portal.js' ),
 			true
 		);
 

@@ -56,9 +56,9 @@ final class AdminMenu {
 			return;
 		}
 
-		wp_enqueue_style( 'ipfo-admin', IPFO_PLUGIN_URL . 'assets/css/ipfo-admin.css', [], IPFO_VERSION );
+		wp_enqueue_style( 'ipfo-admin', IPFO_PLUGIN_URL . 'assets/css/ipfo-admin.css', [], ipfo_asset_version( 'assets/css/ipfo-admin.css' ) );
 		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_media();
-		wp_enqueue_script( 'ipfo-admin', IPFO_PLUGIN_URL . 'assets/js/ipfo-admin.js', [ 'jquery', 'jquery-ui-sortable' ], IPFO_VERSION, true );
+		wp_enqueue_script( 'ipfo-admin', IPFO_PLUGIN_URL . 'assets/js/ipfo-admin.js', [ 'jquery', 'jquery-ui-sortable' ], ipfo_asset_version( 'assets/js/ipfo-admin.js' ), true );
 	}
 }

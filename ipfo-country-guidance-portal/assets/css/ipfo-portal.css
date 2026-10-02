@@ -14,7 +14,7 @@
 	 * first heading collides with the logo. This clearance compensates.
 	 * Adjust --ipfo-header-clearance if the theme's header height changes.
 	 */
-	--ipfo-header-clearance: 140px;
+	--ipfo-header-clearance: 170px;
 	font-family: var(--ipfo-font-body);
 	color: var(--ipfo-text);
 	max-width: var(--ipfo-local-max);
@@ -35,15 +35,29 @@
 	box-sizing: border-box;
 }
 
+/*
+ * !important on family/weight only: UiCore Pro's own heading rules (e.g.
+ * body h2, .entry-content h2) can match with equal or higher specificity
+ * and, depending on stylesheet load order, win over a plain ".ipfo-portal
+ * h2" selector — observed live as headings falling back to the theme's
+ * serif default instead of the brand heading font. Size/margin are not
+ * !important since those are fully namespaced and don't need to fight
+ * the cascade.
+ */
 .ipfo-portal h1,
 .ipfo-portal h2,
 .ipfo-portal h3,
 .ipfo-portal h4 {
-	font-family: var(--ipfo-font-heading);
+	font-family: var(--ipfo-font-heading) !important;
 	color: var(--ipfo-headline);
-	font-weight: 600;
+	font-weight: 600 !important;
 	margin: 0 0 12px;
 }
+
+.ipfo-portal h1 { font-size: 32px; line-height: 1.25; }
+.ipfo-portal h2 { font-size: 24px; line-height: 1.3; }
+.ipfo-portal h3 { font-size: 20px; line-height: 1.35; }
+.ipfo-portal h4 { font-size: 16px; line-height: 1.4; }
 
 .ipfo-portal a {
 	color: var(--ipfo-primary);

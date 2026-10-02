@@ -22,6 +22,21 @@ function ipfo_get_portal_page_url( string $key ): string {
 	return home_url( '/' );
 }
 
+/**
+ * Cache-busting version string for an enqueued asset. Uses the file's own
+ * mtime rather than the static IPFO_VERSION constant, so updating a CSS/JS
+ * file always produces a new ?ver= query string — otherwise a host-level
+ * cache (full-page cache, CDN, or even just the visitor's browser) can keep
+ * serving an old asset indefinitely after a code deploy, since the version
+ * string never changed to signal that anything was updated.
+ */
+function ipfo_asset_version( string $relative_path ): string {
+	$path = IPFO_PLUGIN_DIR . ltrim( $relative_path, '/' );
+	$mtime = is_readable( $path ) ? filemtime( $path ) : false;
+
+	return $mtime ? (string) $mtime : IPFO_VERSION;
+}
+
 function ipfo_disclaimer_text(): string {
 	return (string) get_option( 'ipfo_disclaimer_text', '' );
 }
