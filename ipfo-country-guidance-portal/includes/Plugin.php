@@ -56,6 +56,7 @@ final class Plugin {
 		$this->register_privacy();
 		$this->register_cron();
 		$this->register_capability_sync();
+		$this->register_settings();
 	}
 
 	private function register_post_types(): void {
@@ -128,6 +129,48 @@ final class Plugin {
 	private function register_capability_sync(): void {
 		add_action( 'admin_init', static function (): void {
 			Capabilities::install();
+		} );
+	}
+
+	/**
+	 * Exposes ipfo_portal_pages and ipfo_disclaimer_text through the core
+	 * wp/v2/settings REST endpoint (requires manage_options, same as the
+	 * Settings admin screen). This lets a site owner — or a script acting on
+	 * their behalf — configure which page hosts each shortcode without
+	 * needing the wp-admin Settings screen specifically, which is useful if
+	 * that screen is ever unreachable for environment-specific reasons
+	 * (menu/caching conflicts with another plugin).
+	 */
+	private function register_settings(): void {
+		add_action( 'init', static function (): void {
+			register_setting(
+				'ipfo',
+				'ipfo_portal_pages',
+				[
+					'type'         => 'object',
+					'default'      => [],
+					'show_in_rest' => [
+						'schema' => [
+							'type'       => 'object',
+							'properties' => array_fill_keys(
+								[ 'login', 'register', 'dashboard', 'my-guides', 'guide', 'country-guides', 'resources', 'checklist', 'profile', 'notifications' ],
+								[ 'type' => 'integer' ]
+							),
+						],
+					],
+					'auth_callback' => static fn() => current_user_can( Capabilities::MANAGE_PORTAL ),
+				]
+			);
+
+			register_setting(
+				'ipfo',
+				'ipfo_disclaimer_text',
+				[
+					'type'          => 'string',
+					'show_in_rest'  => true,
+					'auth_callback' => static fn() => current_user_can( Capabilities::MANAGE_PORTAL ),
+				]
+			);
 		} );
 	}
 }

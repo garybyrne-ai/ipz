@@ -6,12 +6,27 @@
  */
 .ipfo-portal {
 	--ipfo-local-max: var(--ipfo-container);
+	/*
+	 * UiCore Pro's header on this site uses a centred logo that overlaps
+	 * down into the page content area — Elementor-built pages normally
+	 * reserve space for this via their own top section, but a plain
+	 * WordPress page (no Elementor template) doesn't, so the portal's own
+	 * first heading collides with the logo. This clearance compensates.
+	 * Adjust --ipfo-header-clearance if the theme's header height changes.
+	 */
+	--ipfo-header-clearance: 140px;
 	font-family: var(--ipfo-font-body);
 	color: var(--ipfo-text);
 	max-width: var(--ipfo-local-max);
 	margin: 0 auto;
-	padding: 24px 16px 64px;
+	padding: var(--ipfo-header-clearance) 16px 64px;
 	box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+	.ipfo-portal {
+		--ipfo-header-clearance: 90px;
+	}
 }
 
 .ipfo-portal *,
