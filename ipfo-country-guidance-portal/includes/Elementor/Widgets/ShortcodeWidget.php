@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * A single reusable Elementor widget shell that renders one of the
  * [IPFO_*] shortcodes. One instance is registered per shortcode tag with
- * its own slug/title/icon, so editors see 11 distinct, properly labelled
+ * its own slug/title/icon, so editors see distinct, properly labelled
  * widgets in the "IPFO Portal" category rather than one generic block.
  */
 final class ShortcodeWidget extends Widget_Base {

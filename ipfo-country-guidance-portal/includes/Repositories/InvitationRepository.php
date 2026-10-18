@@ -21,9 +21,11 @@ final class InvitationRepository extends BaseRepository {
 			[
 				'code'               => $data['code'],
 				'token_hash'         => $data['token_hash'],
+				'invite_type'        => in_array( $data['invite_type'] ?? 'client', [ 'client', 'business' ], true ) ? $data['invite_type'] : 'client',
 				'country_id'         => $data['country_id'] ?? null,
 				'guide_id'           => $data['guide_id'] ?? null,
 				'assigned_resources' => isset( $data['assigned_resources'] ) ? wp_json_encode( array_map( 'intval', (array) $data['assigned_resources'] ) ) : null,
+				'business_category'  => $data['business_category'] ?? null,
 				'max_uses'           => max( 1, (int) ( $data['max_uses'] ?? 1 ) ),
 				'use_count'          => 0,
 				'single_use'         => ! empty( $data['single_use'] ) ? 1 : 0,
@@ -33,7 +35,7 @@ final class InvitationRepository extends BaseRepository {
 				'created_at'         => $now,
 				'updated_at'         => $now,
 			],
-			[ '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d', '%s', '%s', '%d', '%s', '%s' ]
+			[ '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%s', '%s' ]
 		);
 
 		return (int) $this->db->insert_id;
@@ -56,6 +58,11 @@ final class InvitationRepository extends BaseRepository {
 		if ( ! empty( $args['status'] ) ) {
 			$where[]  = 'status = %s';
 			$params[] = $args['status'];
+		}
+
+		if ( ! empty( $args['invite_type'] ) ) {
+			$where[]  = 'invite_type = %s';
+			$params[] = $args['invite_type'];
 		}
 
 		$sql = "SELECT * FROM {$this->table} WHERE " . implode( ' AND ', $where ) . ' ORDER BY created_at DESC';

@@ -31,6 +31,9 @@ final class ElementorIntegration {
 		[ 'ipfo-profile', 'IPFO_PROFILE', 'IPFO Profile', 'eicon-person', false, false ],
 		[ 'ipfo-notifications', 'IPFO_NOTIFICATIONS', 'IPFO Notifications', 'eicon-alert', false, false ],
 		[ 'ipfo-logout', 'IPFO_LOGOUT', 'IPFO Logout', 'eicon-exit', false, true ],
+		[ 'ipfo-directory', 'IPFO_DIRECTORY', 'IPFO Business Directory', 'eicon-posts-grid', false, false ],
+		[ 'ipfo-business-register', 'IPFO_BUSINESS_REGISTER', 'IPFO Business Register', 'eicon-form-horizontal', false, false ],
+		[ 'ipfo-business-dashboard', 'IPFO_BUSINESS_DASHBOARD', 'IPFO Business Dashboard', 'eicon-dashboard', false, false ],
 	];
 
 	public function register(): void {

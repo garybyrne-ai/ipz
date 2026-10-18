@@ -12,16 +12,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SettingsPage {
 
 	private const PAGE_KEYS = [
-		'login'          => 'Sign In',
-		'register'       => 'Register',
-		'dashboard'      => 'Dashboard',
-		'my-guides'      => 'My Guides',
-		'guide'          => 'Guide Reader',
-		'country-guides' => 'Country Guides',
-		'resources'      => 'Resources',
-		'checklist'      => 'Checklist',
-		'profile'        => 'Profile',
-		'notifications'  => 'Notifications',
+		'login'              => 'Sign In',
+		'register'           => 'Register',
+		'dashboard'          => 'Dashboard',
+		'my-guides'          => 'My Guides',
+		'guide'              => 'Guide Reader',
+		'country-guides'     => 'Country Guides',
+		'resources'          => 'Resources',
+		'checklist'          => 'Checklist',
+		'profile'            => 'Profile',
+		'notifications'      => 'Notifications',
+		'directory'          => 'Business Directory',
+		'business-register'  => 'Business Register',
+		'business-dashboard' => 'Business Dashboard',
 	];
 
 	public function render(): void {
@@ -39,6 +42,7 @@ final class SettingsPage {
 			update_option( 'ipfo_require_admin_approval', ! empty( $_POST['require_admin_approval'] ) ? '1' : '0' );
 			update_option( 'ipfo_remove_data_on_uninstall', ! empty( $_POST['remove_data_on_uninstall'] ) ? '1' : '0' );
 			update_option( 'ipfo_default_reading_theme', 'dark' === ( $_POST['default_reading_theme'] ?? 'light' ) ? 'dark' : 'light' );
+			update_option( 'ipfo_require_business_approval', ! empty( $_POST['require_business_approval'] ) ? '1' : '0' );
 
 			$pages = [];
 			foreach ( array_keys( self::PAGE_KEYS ) as $key ) {
@@ -82,6 +86,14 @@ final class SettingsPage {
 				<tr>
 					<th><?php esc_html_e( 'Remove Data on Uninstall', 'ipfo-country-guidance-portal' ); ?></th>
 					<td><label><input type="checkbox" name="remove_data_on_uninstall" value="1" <?php checked( get_option( 'ipfo_remove_data_on_uninstall', '0' ), '1' ); ?> /> <?php esc_html_e( 'Permanently delete all portal data if this plugin is ever uninstalled. Leave unchecked to preserve client data.', 'ipfo-country-guidance-portal' ); ?></label></td>
+				</tr>
+			</table>
+
+			<h2><?php esc_html_e( 'Business Directory', 'ipfo-country-guidance-portal' ); ?></h2>
+			<table class="form-table">
+				<tr>
+					<th><?php esc_html_e( 'Require Approval for New Listings', 'ipfo-country-guidance-portal' ); ?></th>
+					<td><label><input type="checkbox" name="require_business_approval" value="1" <?php checked( get_option( 'ipfo_require_business_approval', '1' ), '1' ); ?> /> <?php esc_html_e( 'New business registrations stay pending in the directory until you publish them from IPFO Portal → Businesses.', 'ipfo-country-guidance-portal' ); ?></label></td>
 				</tr>
 			</table>
 

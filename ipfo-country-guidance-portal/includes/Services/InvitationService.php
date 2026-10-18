@@ -45,9 +45,11 @@ final class InvitationService {
 			[
 				'code'               => $code,
 				'token_hash'         => Tokens::hash( $token ),
+				'invite_type'        => $data['invite_type'] ?? 'client',
 				'country_id'         => $data['country_id'] ?? null,
 				'guide_id'           => $data['guide_id'] ?? null,
 				'assigned_resources' => $data['assigned_resources'] ?? [],
+				'business_category'  => $data['business_category'] ?? null,
 				'max_uses'           => $data['max_uses'] ?? 1,
 				'single_use'         => $data['single_use'] ?? true,
 				'expires_at'         => $data['expires_at'] ?? null,
@@ -57,8 +59,8 @@ final class InvitationService {
 		return [ $id, $code, $token ];
 	}
 
-	public function build_link( string $code, string $token ): string {
-		$register_page = ipfo_get_portal_page_url( 'register' );
+	public function build_link( string $code, string $token, string $invite_type = 'client' ): string {
+		$register_page = ipfo_get_portal_page_url( 'business' === $invite_type ? 'business-register' : 'register' );
 
 		return add_query_arg(
 			[
@@ -123,6 +125,16 @@ final class InvitationService {
 		$this->invitations->increment_use( (int) $invitation->id );
 
 		$this->logs->log( 'invitation_use', $user_id, 'invitation', (int) $invitation->id );
+	}
+
+	/**
+	 * Lighter-weight sibling of redeem() for a business invitation: no
+	 * country/guide/resource grants (those are IP-client-only concepts —
+	 * see AccessControlService), just consumes the invitation and logs it.
+	 */
+	public function mark_used( object $invitation, int $user_id ): void {
+		$this->invitations->increment_use( (int) $invitation->id );
+		$this->logs->log( 'business_invitation_use', $user_id, 'invitation', (int) $invitation->id );
 	}
 
 	public function revoke( int $id ): bool {

@@ -85,6 +85,23 @@ final class GdprHandler {
 			];
 		}
 
+		$business_post_id = (int) get_user_meta( $user->ID, '_ipfo_business_post_id', true );
+		if ( $business_post_id && get_post( $business_post_id ) ) {
+			$items[] = [
+				'group_id'    => 'ipfo_business_listing',
+				'group_label' => __( 'Business Directory Listing', 'ipfo-country-guidance-portal' ),
+				'item_id'     => 'ipfo-business-' . $business_post_id,
+				'data'        => [
+					[ 'name' => __( 'Business Name', 'ipfo-country-guidance-portal' ), 'value' => get_the_title( $business_post_id ) ],
+					[ 'name' => __( 'Status', 'ipfo-country-guidance-portal' ), 'value' => get_post_status( $business_post_id ) ],
+					[ 'name' => __( 'Public Phone', 'ipfo-country-guidance-portal' ), 'value' => get_post_meta( $business_post_id, '_ipfo_phone', true ) ],
+					[ 'name' => __( 'Public Email', 'ipfo-country-guidance-portal' ), 'value' => get_post_meta( $business_post_id, '_ipfo_email', true ) ],
+					[ 'name' => __( 'Website', 'ipfo-country-guidance-portal' ), 'value' => get_post_meta( $business_post_id, '_ipfo_website', true ) ],
+					[ 'name' => __( 'Address', 'ipfo-country-guidance-portal' ), 'value' => get_post_meta( $business_post_id, '_ipfo_address', true ) ],
+				],
+			];
+		}
+
 		return [ 'data' => $items, 'done' => true ];
 	}
 

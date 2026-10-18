@@ -34,6 +34,47 @@ final class NotificationService {
 		);
 	}
 
+	public function business_invitation( string $email, string $link, string $code ): void {
+		$body = sprintf(
+			'<p>%s</p><p style="font-family:Manrope,monospace;font-size:18px;letter-spacing:1px;">%s</p>',
+			esc_html__( 'You have been invited to create a free listing in our recommended provider directory. Use this secure link to get started.', 'ipfo-country-guidance-portal' ),
+			esc_html( $code )
+		);
+
+		Mailer::send(
+			$email,
+			__( 'You\'re invited to join our provider directory', 'ipfo-country-guidance-portal' ),
+			__( 'You have been invited', 'ipfo-country-guidance-portal' ),
+			$body,
+			__( 'Create Your Listing', 'ipfo-country-guidance-portal' ),
+			$link
+		);
+	}
+
+	public function business_registration_received( \WP_User $user, bool $pending_review ): void {
+		$message = $pending_review
+			? __( 'Thank you for registering your business. Your listing is now awaiting review and will go live in the directory once approved.', 'ipfo-country-guidance-portal' )
+			: __( 'Thank you for registering your business. Your listing is now live in the directory.', 'ipfo-country-guidance-portal' );
+
+		Mailer::send(
+			$user->user_email,
+			__( 'Thank you for registering your business', 'ipfo-country-guidance-portal' ),
+			__( 'Thank you. Your listing is being prepared.', 'ipfo-country-guidance-portal' ),
+			'<p>' . esc_html( $message ) . '</p>'
+		);
+	}
+
+	public function business_listing_published( \WP_User $user, string $business_name, string $listing_link ): void {
+		Mailer::send(
+			$user->user_email,
+			__( 'Your business listing is now live', 'ipfo-country-guidance-portal' ),
+			__( 'Your listing is now live', 'ipfo-country-guidance-portal' ),
+			'<p>' . sprintf( esc_html__( '%s has been approved and is now visible in our public directory.', 'ipfo-country-guidance-portal' ), esc_html( $business_name ) ) . '</p>',
+			__( 'View Your Listing', 'ipfo-country-guidance-portal' ),
+			$listing_link
+		);
+	}
+
 	public function registration_received( \WP_User $user ): void {
 		Mailer::send(
 			$user->user_email,

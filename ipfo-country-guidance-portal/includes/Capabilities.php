@@ -35,6 +35,21 @@ final class Capabilities {
 	public const ACCESS_PORTAL  = 'ipfo_access_portal';
 	public const CLIENT_ROLE    = 'ipfo_client';
 
+	/**
+	 * Business Directory owner account (IVF clinics, lawyers, genetic
+	 * testing, psychologists, fertility counsellors, supplement providers).
+	 * Deliberately granted NO capability on the ipfo_business post type
+	 * itself — see the warning on cpt_capabilities(). A business owner only
+	 * ever touches their own listing through BusinessDirectoryService,
+	 * which checks post_author ownership itself and writes via
+	 * wp_update_post() directly, exactly like every other client-facing
+	 * write in this plugin (checklist/progress/acknowledgements). This
+	 * sidesteps the entire meta-cap minefield rather than trying to build a
+	 * safe "edit only your own post" capability map.
+	 */
+	public const BUSINESS_ROLE           = 'ipfo_business_owner';
+	public const ACCESS_BUSINESS_PORTAL  = 'ipfo_access_business_portal';
+
 	public static function install(): void {
 		$admin = get_role( 'administrator' );
 		if ( $admin && ! $admin->has_cap( self::MANAGE_PORTAL_GRANULAR ) ) {
@@ -51,6 +66,17 @@ final class Capabilities {
 				]
 			);
 		}
+
+		if ( ! get_role( self::BUSINESS_ROLE ) ) {
+			add_role(
+				self::BUSINESS_ROLE,
+				__( 'Business Directory Listing', 'ipfo-country-guidance-portal' ),
+				[
+					'read'                       => true,
+					self::ACCESS_BUSINESS_PORTAL => true,
+				]
+			);
+		}
 	}
 
 	public static function current_user_can_manage(): bool {
@@ -59,6 +85,10 @@ final class Capabilities {
 
 	public static function current_user_can_access_portal(): bool {
 		return is_user_logged_in() && current_user_can( self::ACCESS_PORTAL ) || self::current_user_can_manage();
+	}
+
+	public static function current_user_can_access_business_portal(): bool {
+		return is_user_logged_in() && current_user_can( self::ACCESS_BUSINESS_PORTAL ) || self::current_user_can_manage();
 	}
 
 	/**

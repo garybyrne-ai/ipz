@@ -48,9 +48,11 @@ final class Schema {
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 			code VARCHAR(64) NOT NULL,
 			token_hash CHAR(64) NOT NULL,
+			invite_type VARCHAR(20) NOT NULL DEFAULT 'client',
 			country_id BIGINT UNSIGNED NULL,
 			guide_id BIGINT UNSIGNED NULL,
 			assigned_resources LONGTEXT NULL,
+			business_category BIGINT UNSIGNED NULL,
 			max_uses INT UNSIGNED NOT NULL DEFAULT 1,
 			use_count INT UNSIGNED NOT NULL DEFAULT 0,
 			single_use TINYINT(1) NOT NULL DEFAULT 1,
@@ -62,7 +64,8 @@ final class Schema {
 			PRIMARY KEY  (id),
 			UNIQUE KEY code (code),
 			KEY status (status),
-			KEY country_id (country_id)
+			KEY country_id (country_id),
+			KEY invite_type (invite_type)
 		) {$charset_collate};";
 
 		$tables[] = "CREATE TABLE {$wpdb->prefix}ipfo_user_access (

@@ -7,6 +7,7 @@ use IPFO\Capabilities;
 use IPFO\CPT\CountryGuideCPT;
 use IPFO\CPT\ResourceCPT;
 use IPFO\Repositories\CountryRepository;
+use IPFO\Services\BusinessDirectoryService;
 use IPFO\Services\InvitationService;
 use IPFO\Services\NotificationService;
 
@@ -28,22 +29,30 @@ final class InvitationsPage {
 		if ( isset( $_POST['ipfo_invitation_action'] ) && 'create' === $_POST['ipfo_invitation_action'] ) {
 			check_admin_referer( 'ipfo_create_invitation', 'ipfo_invitation_nonce' );
 
+			$invite_type = 'business' === ( $_POST['invite_type'] ?? 'client' ) ? 'business' : 'client';
+
 			[ , $code, $token ] = $service->create(
 				[
+					'invite_type'        => $invite_type,
 					'country_id'         => absint( $_POST['country_id'] ?? 0 ) ?: null,
-					'guide_id'           => absint( $_POST['guide_id'] ?? 0 ) ?: null,
-					'assigned_resources' => array_map( 'absint', (array) ( $_POST['resource_ids'] ?? [] ) ),
+					'guide_id'           => 'client' === $invite_type ? ( absint( $_POST['guide_id'] ?? 0 ) ?: null ) : null,
+					'assigned_resources' => 'client' === $invite_type ? array_map( 'absint', (array) ( $_POST['resource_ids'] ?? [] ) ) : [],
+					'business_category'  => 'business' === $invite_type ? ( absint( $_POST['business_category'] ?? 0 ) ?: null ) : null,
 					'max_uses'           => max( 1, absint( $_POST['max_uses'] ?? 1 ) ),
 					'single_use'         => ! empty( $_POST['single_use'] ),
 					'expires_at'         => ! empty( $_POST['expires_at'] ) ? sanitize_text_field( wp_unslash( $_POST['expires_at'] ) ) . ' 23:59:59' : null,
 				]
 			);
 
-			$created_link = $service->build_link( $code, $token );
+			$created_link = $service->build_link( $code, $token, $invite_type );
 
 			$send_email = sanitize_email( wp_unslash( $_POST['send_email'] ?? '' ) );
 			if ( $send_email && is_email( $send_email ) ) {
-				( new NotificationService() )->invitation( $send_email, $created_link, $code );
+				if ( 'business' === $invite_type ) {
+					( new NotificationService() )->business_invitation( $send_email, $created_link, $code );
+				} else {
+					( new NotificationService() )->invitation( $send_email, $created_link, $code );
+				}
 				$notice = sprintf( __( 'Invitation %s created and emailed.', 'ipfo-country-guidance-portal' ), $code );
 			} else {
 				$notice = sprintf( __( 'Invitation %s created.', 'ipfo-country-guidance-portal' ), $code );
@@ -58,6 +67,7 @@ final class InvitationsPage {
 		$countries  = ( new CountryRepository() )->all( 'active' );
 		$guides     = get_posts( [ 'post_type' => CountryGuideCPT::SLUG, 'posts_per_page' => -1, 'post_status' => 'publish' ] );
 		$resources  = get_posts( [ 'post_type' => ResourceCPT::SLUG, 'posts_per_page' => -1, 'post_status' => 'publish' ] );
+		$categories = ( new BusinessDirectoryService() )->categories();
 		$invitations = $service->all();
 
 		echo '<div class="wrap"><h1>' . esc_html__( 'Invitations', 'ipfo-country-guidance-portal' ) . '</h1>';
@@ -68,19 +78,28 @@ final class InvitationsPage {
 			echo '<div class="notice notice-info"><p>' . esc_html__( 'Secure link:', 'ipfo-country-guidance-portal' ) . ' <code>' . esc_html( $created_link ) . '</code></p></div>';
 		}
 
-		$this->render_form( $countries, $guides, $resources );
+		$this->render_form( $countries, $guides, $resources, $categories );
 		$this->render_table( $invitations, $service );
 
 		echo '</div>';
 	}
 
-	private function render_form( array $countries, array $guides, array $resources ): void {
+	private function render_form( array $countries, array $guides, array $resources, array $categories ): void {
 		?>
 		<h2><?php esc_html_e( 'Create Invitation', 'ipfo-country-guidance-portal' ); ?></h2>
 		<form method="post" style="max-width:640px;">
 			<input type="hidden" name="ipfo_invitation_action" value="create" />
 			<?php wp_nonce_field( 'ipfo_create_invitation', 'ipfo_invitation_nonce' ); ?>
 			<table class="form-table">
+				<tr>
+					<th><label for="invite_type"><?php esc_html_e( 'Invitation Type', 'ipfo-country-guidance-portal' ); ?></label></th>
+					<td>
+						<select id="invite_type" name="invite_type">
+							<option value="client"><?php esc_html_e( 'Intended Parent (client)', 'ipfo-country-guidance-portal' ); ?></option>
+							<option value="business"><?php esc_html_e( 'Business Directory listing', 'ipfo-country-guidance-portal' ); ?></option>
+						</select>
+					</td>
+				</tr>
 				<tr>
 					<th><label for="country_id"><?php esc_html_e( 'Country', 'ipfo-country-guidance-portal' ); ?></label></th>
 					<td>
@@ -92,7 +111,7 @@ final class InvitationsPage {
 						</select>
 					</td>
 				</tr>
-				<tr>
+				<tr data-ipfo-invite-field="client">
 					<th><label for="guide_id"><?php esc_html_e( 'Specific Guide (optional)', 'ipfo-country-guidance-portal' ); ?></label></th>
 					<td>
 						<select id="guide_id" name="guide_id">
@@ -103,7 +122,7 @@ final class InvitationsPage {
 						</select>
 					</td>
 				</tr>
-				<tr>
+				<tr data-ipfo-invite-field="client">
 					<th><label for="resource_ids"><?php esc_html_e( 'Assigned Resources', 'ipfo-country-guidance-portal' ); ?></label></th>
 					<td>
 						<select id="resource_ids" name="resource_ids[]" multiple size="5" style="min-width:300px;">
@@ -111,6 +130,18 @@ final class InvitationsPage {
 								<option value="<?php echo esc_attr( $r->ID ); ?>"><?php echo esc_html( get_the_title( $r ) ); ?></option>
 							<?php endforeach; ?>
 						</select>
+					</td>
+				</tr>
+				<tr data-ipfo-invite-field="business" style="display:none;">
+					<th><label for="business_category"><?php esc_html_e( 'Business Category', 'ipfo-country-guidance-portal' ); ?></label></th>
+					<td>
+						<select id="business_category" name="business_category">
+							<option value=""><?php esc_html_e( '— None —', 'ipfo-country-guidance-portal' ); ?></option>
+							<?php foreach ( $categories as $term ) : ?>
+								<option value="<?php echo esc_attr( $term->term_id ); ?>"><?php echo esc_html( $term->name ); ?></option>
+							<?php endforeach; ?>
+						</select>
+						<p class="description"><?php esc_html_e( 'Pre-fills the category on their listing; they can still change it from their dashboard.', 'ipfo-country-guidance-portal' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -132,6 +163,17 @@ final class InvitationsPage {
 			</table>
 			<?php submit_button( __( 'Generate Invitation', 'ipfo-country-guidance-portal' ) ); ?>
 		</form>
+		<script>
+		jQuery(function($){
+			function toggleInviteFields(){
+				var isBusiness = $('#invite_type').val() === 'business';
+				$('[data-ipfo-invite-field="client"]').toggle(!isBusiness);
+				$('[data-ipfo-invite-field="business"]').toggle(isBusiness);
+			}
+			$('#invite_type').on('change', toggleInviteFields);
+			toggleInviteFields();
+		});
+		</script>
 		<?php
 	}
 
@@ -142,6 +184,7 @@ final class InvitationsPage {
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Code', 'ipfo-country-guidance-portal' ); ?></th>
+					<th><?php esc_html_e( 'Type', 'ipfo-country-guidance-portal' ); ?></th>
 					<th><?php esc_html_e( 'Status', 'ipfo-country-guidance-portal' ); ?></th>
 					<th><?php esc_html_e( 'Uses', 'ipfo-country-guidance-portal' ); ?></th>
 					<th><?php esc_html_e( 'Expires', 'ipfo-country-guidance-portal' ); ?></th>
@@ -153,6 +196,7 @@ final class InvitationsPage {
 				<?php foreach ( $invitations as $inv ) : ?>
 					<tr>
 						<td><span class="ipfo-admin-code"><?php echo esc_html( $inv->code ); ?></span></td>
+						<td><?php echo 'business' === ( $inv->invite_type ?? 'client' ) ? esc_html__( 'Business', 'ipfo-country-guidance-portal' ) : esc_html__( 'Client', 'ipfo-country-guidance-portal' ); ?></td>
 						<td><span class="ipfo-admin-pill ipfo-admin-pill--<?php echo esc_attr( $inv->status ); ?>"><?php echo esc_html( ucfirst( $inv->status ) ); ?></span></td>
 						<td><?php echo (int) $inv->use_count; ?> / <?php echo (int) $inv->max_uses; ?></td>
 						<td><?php echo esc_html( $inv->expires_at ?: '—' ); ?></td>
@@ -167,7 +211,7 @@ final class InvitationsPage {
 					</tr>
 				<?php endforeach; ?>
 				<?php if ( empty( $invitations ) ) : ?>
-					<tr><td colspan="6"><?php esc_html_e( 'No invitations yet.', 'ipfo-country-guidance-portal' ); ?></td></tr>
+					<tr><td colspan="7"><?php esc_html_e( 'No invitations yet.', 'ipfo-country-guidance-portal' ); ?></td></tr>
 				<?php endif; ?>
 			</tbody>
 		</table>

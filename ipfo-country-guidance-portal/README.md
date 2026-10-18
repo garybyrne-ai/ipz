@@ -13,15 +13,21 @@ short install summary see `readme.txt`.
 Nothing in this plugin modifies WordPress core, the active theme, Elementor,
 or any existing page. Everything is delivered as:
 
-- Custom post types that are **not publicly queryable** (no new front-end
-  URLs are created by the CPTs themselves).
+- Custom post types that are **not publicly queryable**, with one deliberate
+  exception: `ipfo_business` (the public Business Directory listings — see
+  §8) is the only CPT that creates its own front-end URLs
+  (`/directory/…`), because a public, SEO-visible provider directory is the
+  whole point of that module. Every other CPT stays private to the portal.
 - Custom database tables, namespaced `{$wpdb->prefix}ipfo_*`, created only
   on activation and left untouched by theme/plugin updates elsewhere.
-- Eleven shortcodes and matching Elementor widgets that a site editor drops
+- Fourteen shortcodes and matching Elementor widgets that a site editor drops
   onto their own Elementor pages (e.g. `/client-portal/`), exactly like any
   other Elementor widget. The surrounding page — header, footer, global
   colours, fonts, container width — is still 100% the existing UiCore Pro
-  page.
+  page. The one exception is the single business profile page, which is
+  rendered by hooking `template_include` (the same technique WooCommerce
+  uses for single-product pages) rather than a shortcode, since it needs a
+  real, individually-linkable permalink per listing.
 - CSS that is fully namespaced under `.ipfo-*` selectors (see
   `assets/css/ipfo-portal.css`) and only enqueued on pages that actually use
   a portal shortcode/widget (`includes/Frontend/Assets.php`), so the public

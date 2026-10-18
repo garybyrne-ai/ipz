@@ -24,6 +24,17 @@ abstract class ShortcodeBase {
 		);
 	}
 
+	protected function require_business_access(): string|true {
+		if ( Capabilities::current_user_can_access_business_portal() ) {
+			return true;
+		}
+
+		return ipfo_render_template(
+			'partials/login-required.php',
+			[ 'login_url' => ipfo_get_portal_page_url( 'login' ) ]
+		);
+	}
+
 	protected function wrap( string $inner, string $extra_class = '' ): string {
 		$theme = get_option( 'ipfo_default_reading_theme', 'light' );
 

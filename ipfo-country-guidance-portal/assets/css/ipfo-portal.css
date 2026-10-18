@@ -407,3 +407,121 @@
 .ipfo-empty-state { text-align: center; padding: 60px 20px; color: var(--ipfo-text); }
 .ipfo-skeleton { background: linear-gradient(90deg, var(--ipfo-light) 25%, var(--ipfo-border) 50%, var(--ipfo-light) 75%); background-size: 200% 100%; animation: ipfo-shimmer 1.4s infinite; border-radius: var(--ipfo-radius-sm); }
 @keyframes ipfo-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/*
+ * Business Directory. The only public-facing area of the portal — reachable
+ * by anyone, not just logged-in clients — so .ipfo-portal--public exists
+ * purely as a styling hook in case a future tweak needs to tell it apart
+ * from the gated portal pages (e.g. a different header clearance).
+ */
+.ipfo-portal--public {}
+
+/* Generic status/feature pill, distinct from .ipfo-badge (used for the
+   invitation code chip) and .ipfo-admin-pill (wp-admin only). */
+.ipfo-pill {
+	display: inline-block;
+	font-family: var(--ipfo-font-heading);
+	font-size: 12px;
+	font-weight: 600;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: var(--ipfo-light);
+	color: var(--ipfo-secondary);
+}
+.ipfo-pill--publish { background: #E7F5EC; color: var(--ipfo-success); }
+.ipfo-pill--pending { background: #FBF2DD; color: var(--ipfo-warning); }
+.ipfo-pill--draft,
+.ipfo-pill--trash { background: #FDECEA; color: var(--ipfo-danger); }
+.ipfo-pill--featured { background: linear-gradient(90deg, var(--ipfo-primary), var(--ipfo-dark-accent)); color: var(--ipfo-white); }
+
+.ipfo-directory-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 28px;
+	padding: 20px;
+	background: var(--ipfo-white);
+	border: 1px solid var(--ipfo-border);
+	border-radius: var(--ipfo-radius);
+}
+.ipfo-directory-filters input[type="search"],
+.ipfo-directory-filters select {
+	font-family: var(--ipfo-font-body);
+	font-size: 14px;
+	padding: 10px 12px;
+	border: 1px solid var(--ipfo-border);
+	border-radius: var(--ipfo-radius-sm);
+	background: var(--ipfo-white);
+	color: var(--ipfo-text);
+}
+.ipfo-directory-filters input[type="search"] { flex: 1; min-width: 180px; }
+
+.ipfo-directory-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+}
+@media (max-width: 1024px) { .ipfo-directory-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 767px) { .ipfo-directory-grid { grid-template-columns: 1fr; } }
+
+.ipfo-business-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	background: var(--ipfo-white);
+	border: 1px solid var(--ipfo-border);
+	border-radius: var(--ipfo-radius);
+	box-shadow: var(--ipfo-shadow);
+	padding: 24px;
+	text-decoration: none !important;
+	transition: box-shadow .25s ease, transform .25s ease;
+}
+.ipfo-business-card:hover { box-shadow: var(--ipfo-shadow-hover); transform: translateY(-2px); }
+.ipfo-business-card--featured { border-color: var(--ipfo-primary); }
+.ipfo-business-card .ipfo-pill--featured { position: absolute; top: 16px; right: 16px; }
+
+.ipfo-business-card__logo { width: 56px; height: 56px; border-radius: var(--ipfo-radius-sm); overflow: hidden; background: var(--ipfo-light); display: flex; align-items: center; justify-content: center; }
+.ipfo-business-card__logo img { width: 100%; height: 100%; object-fit: cover; }
+.ipfo-business-card__logo-fallback { font-family: var(--ipfo-font-heading); font-weight: 700; font-size: 22px; color: var(--ipfo-secondary); }
+
+.ipfo-business-card__name { font-size: 18px; margin: 0; }
+.ipfo-business-card__category {
+	display: inline-block;
+	font-family: var(--ipfo-font-heading);
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--ipfo-secondary);
+}
+.ipfo-business-card__excerpt { font-size: 14px; color: var(--ipfo-text); margin: 0; }
+.ipfo-business-card__cta { font-family: var(--ipfo-font-heading); font-weight: 600; font-size: 14px; color: var(--ipfo-primary) !important; margin-top: auto; }
+
+.ipfo-pagination { display: flex; gap: 8px; justify-content: center; margin-top: 32px; }
+.ipfo-pagination__link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: var(--ipfo-radius-sm);
+	border: 1px solid var(--ipfo-border);
+	color: var(--ipfo-headline) !important;
+	text-decoration: none !important;
+	font-family: var(--ipfo-font-heading);
+	font-size: 14px;
+}
+.ipfo-pagination__link.is-active { background: var(--ipfo-primary); border-color: var(--ipfo-primary); color: var(--ipfo-white) !important; }
+
+/* Single business profile */
+.ipfo-business-profile__header { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
+.ipfo-business-profile__logo { width: 96px; height: 96px; border-radius: var(--ipfo-radius); overflow: hidden; flex: none; background: var(--ipfo-light); }
+.ipfo-business-profile__logo img { width: 100%; height: 100%; object-fit: cover; }
+.ipfo-business-profile__description { font-size: 15px; line-height: 1.7; }
+.ipfo-business-profile__contact { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.ipfo-business-profile__contact li { padding: 6px 0; border-bottom: 1px solid var(--ipfo-border); }
+.ipfo-business-profile__contact li:last-child { border-bottom: 0; }
+.ipfo-business-profile__social { display: flex; gap: 14px; margin-top: 14px; }
+.ipfo-business-profile__social a { font-family: var(--ipfo-font-heading); font-weight: 600; font-size: 13px; }

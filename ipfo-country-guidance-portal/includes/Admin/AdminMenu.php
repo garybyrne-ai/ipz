@@ -12,6 +12,7 @@ use IPFO\Admin\Pages\ChecklistsPage;
 use IPFO\Admin\Pages\AnalyticsPage;
 use IPFO\Admin\Pages\AccessLogsPage;
 use IPFO\Admin\Pages\SettingsPage;
+use IPFO\CPT\BusinessCPT;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -56,13 +57,19 @@ final class AdminMenu {
 		add_submenu_page( self::SLUG, __( 'Invitations', 'ipfo-country-guidance-portal' ), __( 'Invitations', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-invitations', [ new InvitationsPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Users & Access', 'ipfo-country-guidance-portal' ), __( 'Users & Access', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-users-access', [ new UsersAccessPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Checklists', 'ipfo-country-guidance-portal' ), __( 'Checklists', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-checklists', [ new ChecklistsPage(), 'render' ] );
+		// The "Businesses" list screen itself appears automatically (BusinessCPT
+		// registers with show_in_menu => self::SLUG, same as every other CPT
+		// here); only the taxonomy's own admin screen needs an explicit entry —
+		// WordPress does not reliably auto-nest a taxonomy under a custom parent
+		// slug the way it does for the post type's own list table.
+		add_submenu_page( self::SLUG, __( 'Business Categories', 'ipfo-country-guidance-portal' ), __( 'Business Categories', 'ipfo-country-guidance-portal' ), $cap, 'edit-tags.php?taxonomy=' . BusinessCPT::TAXONOMY . '&post_type=' . BusinessCPT::SLUG );
 		add_submenu_page( self::SLUG, __( 'Analytics', 'ipfo-country-guidance-portal' ), __( 'Analytics', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-analytics', [ new AnalyticsPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Access Logs', 'ipfo-country-guidance-portal' ), __( 'Access Logs', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-access-logs', [ new AccessLogsPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Settings', 'ipfo-country-guidance-portal' ), __( 'Settings', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-settings', [ new SettingsPage(), 'render' ] );
 	}
 
 	public function enqueue_assets( string $hook ): void {
-		if ( ! str_contains( $hook, self::SLUG ) && ! str_contains( (string) ( $_GET['page'] ?? '' ), 'ipfo-' ) && ! in_array( get_current_screen()?->post_type, [ 'ipfo_guide', 'ipfo_chapter', 'ipfo_resource', 'ipfo_faq' ], true ) ) {
+		if ( ! str_contains( $hook, self::SLUG ) && ! str_contains( (string) ( $_GET['page'] ?? '' ), 'ipfo-' ) && ! in_array( get_current_screen()?->post_type, [ 'ipfo_guide', 'ipfo_chapter', 'ipfo_resource', 'ipfo_faq', BusinessCPT::SLUG ], true ) ) {
 			return;
 		}
 

@@ -4,10 +4,12 @@ declare( strict_types = 1 );
 namespace IPFO;
 
 use IPFO\Admin\AdminMenu;
+use IPFO\Admin\MetaBoxes\BusinessMetaBox;
 use IPFO\Admin\MetaBoxes\ChapterMetaBox;
 use IPFO\Admin\MetaBoxes\FaqMetaBox;
 use IPFO\Admin\MetaBoxes\GuideMetaBox;
 use IPFO\Admin\MetaBoxes\ResourceMetaBox;
+use IPFO\CPT\BusinessCPT;
 use IPFO\CPT\CountryGuideCPT;
 use IPFO\CPT\FaqCPT;
 use IPFO\CPT\GuideChapterCPT;
@@ -15,8 +17,10 @@ use IPFO\CPT\ResourceCPT;
 use IPFO\Database\Schema;
 use IPFO\Elementor\ElementorIntegration;
 use IPFO\Frontend\Assets;
+use IPFO\Frontend\SingleBusinessTemplate;
 use IPFO\Privacy\GdprHandler;
 use IPFO\Rest\RestController;
+use IPFO\Services\BusinessDirectoryService;
 use IPFO\Services\InvitationService;
 use IPFO\Services\RegistrationService;
 use IPFO\Services\ResourceDownloadService;
@@ -57,6 +61,8 @@ final class Plugin {
 		$this->register_cron();
 		$this->register_capability_sync();
 		$this->register_settings();
+		$this->register_business_directory();
+		$this->maybe_flush_rewrite_rules();
 	}
 
 	private function register_post_types(): void {
@@ -64,6 +70,7 @@ final class Plugin {
 		( new GuideChapterCPT() )->register();
 		( new ResourceCPT() )->register();
 		( new FaqCPT() )->register();
+		( new BusinessCPT() )->register();
 	}
 
 	private function register_meta_boxes(): void {
@@ -71,6 +78,7 @@ final class Plugin {
 		( new ChapterMetaBox() )->register();
 		( new ResourceMetaBox() )->register();
 		( new FaqMetaBox() )->register();
+		( new BusinessMetaBox() )->register();
 	}
 
 	private function register_shortcodes(): void {
@@ -96,6 +104,30 @@ final class Plugin {
 	private function register_frontend(): void {
 		( new Assets() )->register();
 		ResourceDownloadService::register();
+		( new SingleBusinessTemplate() )->register();
+	}
+
+	private function register_business_directory(): void {
+		BusinessDirectoryService::register_hooks();
+	}
+
+	/**
+	 * BusinessCPT introduces real rewrite rules (/directory/…) for the first
+	 * time in this plugin — every other CPT here is rewrite => false. A site
+	 * that updates the plugin files without a full deactivate/reactivate
+	 * cycle (e.g. overwriting via FTP/SFTP, as this plugin was explicitly
+	 * built to support) would otherwise keep serving 404s on those
+	 * permalinks until someone happens to visit Settings → Permalinks and
+	 * hits Save. This mirrors the existing register_capability_sync()
+	 * self-healing pattern: cheap to check, flushes once per version bump.
+	 */
+	private function maybe_flush_rewrite_rules(): void {
+		add_action( 'init', static function (): void {
+			if ( get_option( 'ipfo_rewrite_version' ) !== IPFO_VERSION ) {
+				flush_rewrite_rules();
+				update_option( 'ipfo_rewrite_version', IPFO_VERSION );
+			}
+		}, 20 );
 	}
 
 	private function register_admin(): void {
@@ -153,7 +185,7 @@ final class Plugin {
 						'schema' => [
 							'type'       => 'object',
 							'properties' => array_fill_keys(
-								[ 'login', 'register', 'dashboard', 'my-guides', 'guide', 'country-guides', 'resources', 'checklist', 'profile', 'notifications' ],
+								[ 'login', 'register', 'dashboard', 'my-guides', 'guide', 'country-guides', 'resources', 'checklist', 'profile', 'notifications', 'directory', 'business-register', 'business-dashboard' ],
 								[ 'type' => 'integer' ]
 							),
 						],

@@ -8,6 +8,7 @@ use IPFO\CPT\CountryGuideCPT;
 use IPFO\CPT\GuideChapterCPT;
 use IPFO\CPT\ResourceCPT;
 use IPFO\CPT\FaqCPT;
+use IPFO\CPT\BusinessCPT;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,8 +39,11 @@ final class Activator {
 		( new GuideChapterCPT() )->register_post_type();
 		( new ResourceCPT() )->register_post_type();
 		( new FaqCPT() )->register_post_type();
+		( new BusinessCPT() )->register_post_type();
+		( new BusinessCPT() )->register_taxonomy();
 
 		self::seed_default_options();
+		self::seed_business_categories();
 
 		if ( ! wp_next_scheduled( 'ipfo_daily_maintenance' ) ) {
 			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'ipfo_daily_maintenance' );
@@ -58,18 +62,37 @@ final class Activator {
 		add_option(
 			'ipfo_portal_pages',
 			[
-				'login'          => '',
-				'register'       => '',
-				'dashboard'      => '',
-				'my-guides'      => '',
-				'guide'          => '',
-				'country-guides' => '',
-				'resources'      => '',
-				'checklist'      => '',
-				'profile'        => '',
-				'notifications'  => '',
+				'login'             => '',
+				'register'          => '',
+				'dashboard'         => '',
+				'my-guides'         => '',
+				'guide'             => '',
+				'country-guides'    => '',
+				'resources'         => '',
+				'checklist'         => '',
+				'profile'           => '',
+				'notifications'     => '',
+				'directory'         => '',
+				'business-register' => '',
+				'business-dashboard' => '',
 			]
 		);
+		add_option( 'ipfo_require_business_approval', '1' );
+	}
+
+	/**
+	 * Seeds the business directory taxonomy with the niches the site owner
+	 * asked for at launch (IVF clinics, lawyers, genetic testing,
+	 * psychologists, fertility counsellors, supplement providers). Admins
+	 * can add more from IPFO Portal → Business Categories at any time —
+	 * term_exists() guards against duplicating these on every reactivation.
+	 */
+	private static function seed_business_categories(): void {
+		foreach ( BusinessCPT::DEFAULT_CATEGORIES as $name ) {
+			if ( ! term_exists( $name, BusinessCPT::TAXONOMY ) ) {
+				wp_insert_term( $name, BusinessCPT::TAXONOMY );
+			}
+		}
 	}
 
 	private static function default_disclaimer(): string {

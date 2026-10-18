@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       IPFO Country Guidance Portal
  * Plugin URI:        https://ipfertilityoptions.com/
- * Description:       Secure, premium Intended Parent client portal for IP Fertility Options. Country-specific surrogacy guidance, digital booklets, checklists, resources and invitation-based access control. Integrates with the existing UiCore Pro + Elementor website.
- * Version:           1.0.0
+ * Description:       Secure, premium Intended Parent client portal for IP Fertility Options. Country-specific surrogacy guidance, digital booklets, checklists, resources, invitation-based access control, and a public directory of recommended IVF clinics, lawyers, genetic testing, psychologists, fertility counsellors and supplement providers. Integrates with the existing UiCore Pro + Elementor website.
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
  * Author:            IP Fertility Options
@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'IPFO_VERSION', '1.0.0' );
-define( 'IPFO_DB_VERSION', '1.0.0' );
+define( 'IPFO_VERSION', '1.1.0' );
+define( 'IPFO_DB_VERSION', '1.1.0' );
 define( 'IPFO_PLUGIN_FILE', __FILE__ );
 define( 'IPFO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'IPFO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

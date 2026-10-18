@@ -21,6 +21,9 @@ final class ShortcodeManager {
 		'IPFO_PROFILE'        => ProfileShortcode::class,
 		'IPFO_NOTIFICATIONS'  => NotificationsShortcode::class,
 		'IPFO_LOGOUT'         => LogoutShortcode::class,
+		'IPFO_DIRECTORY'          => DirectoryShortcode::class,
+		'IPFO_BUSINESS_REGISTER'  => BusinessRegisterShortcode::class,
+		'IPFO_BUSINESS_DASHBOARD' => BusinessDashboardShortcode::class,
 	];
 
 	public function register(): void {
