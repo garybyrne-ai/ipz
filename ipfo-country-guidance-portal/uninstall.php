@@ -62,6 +62,8 @@ $options = [
 	'ipfo_remove_data_on_uninstall',
 	'ipfo_default_reading_theme',
 	'ipfo_portal_pages',
+	'ipfo_demo_data_installed',
+	'ipfo_demo_data_refs',
 ];
 
 foreach ( $options as $option ) {

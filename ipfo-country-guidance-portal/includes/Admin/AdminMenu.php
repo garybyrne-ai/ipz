@@ -11,6 +11,7 @@ use IPFO\Admin\Pages\UsersAccessPage;
 use IPFO\Admin\Pages\ChecklistsPage;
 use IPFO\Admin\Pages\AnalyticsPage;
 use IPFO\Admin\Pages\AccessLogsPage;
+use IPFO\Admin\Pages\DemoDataPage;
 use IPFO\Admin\Pages\SettingsPage;
 use IPFO\CPT\BusinessCPT;
 
@@ -66,6 +67,7 @@ final class AdminMenu {
 		add_submenu_page( self::SLUG, __( 'Analytics', 'ipfo-country-guidance-portal' ), __( 'Analytics', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-analytics', [ new AnalyticsPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Access Logs', 'ipfo-country-guidance-portal' ), __( 'Access Logs', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-access-logs', [ new AccessLogsPage(), 'render' ] );
 		add_submenu_page( self::SLUG, __( 'Settings', 'ipfo-country-guidance-portal' ), __( 'Settings', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-settings', [ new SettingsPage(), 'render' ] );
+		add_submenu_page( self::SLUG, __( 'Demo Data', 'ipfo-country-guidance-portal' ), __( 'Demo Data', 'ipfo-country-guidance-portal' ), $cap, 'ipfo-demo-data', [ new DemoDataPage(), 'render' ] );
 	}
 
 	public function enqueue_assets( string $hook ): void {
