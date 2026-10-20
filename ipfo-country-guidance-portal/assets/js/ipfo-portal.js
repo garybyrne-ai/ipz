@@ -172,10 +172,39 @@
 		} );
 	}
 
+	/* ---------- Sidebar navigation (mobile slide-out drawer) ---------- */
+	function initNav() {
+		var toggle   = document.querySelector( '[data-ipfo-nav-toggle]' );
+		var sidebar  = document.querySelector( '[data-ipfo-sidebar]' );
+		var backdrop = document.querySelector( '[data-ipfo-nav-backdrop]' );
+		if ( ! toggle || ! sidebar || ! backdrop ) { return; }
+
+		function close() {
+			sidebar.classList.remove( 'is-open' );
+			backdrop.classList.remove( 'is-open' );
+			toggle.setAttribute( 'aria-expanded', 'false' );
+		}
+
+		function open() {
+			sidebar.classList.add( 'is-open' );
+			backdrop.classList.add( 'is-open' );
+			toggle.setAttribute( 'aria-expanded', 'true' );
+		}
+
+		toggle.addEventListener( 'click', function () {
+			if ( sidebar.classList.contains( 'is-open' ) ) { close(); } else { open(); }
+		} );
+		backdrop.addEventListener( 'click', close );
+		sidebar.querySelectorAll( 'a' ).forEach( function ( link ) {
+			link.addEventListener( 'click', close );
+		} );
+	}
+
 	document.addEventListener( 'DOMContentLoaded', function () {
 		initTheme();
 		initBooklet();
 		initChecklist();
 		initFaq();
+		initNav();
 	} );
 } )();

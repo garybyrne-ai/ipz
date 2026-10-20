@@ -17,11 +17,11 @@ final class LoginShortcode extends ShortcodeBase {
 		$this->maybe_handle_verification();
 
 		if ( is_user_logged_in() ) {
-			return $this->wrap( ipfo_render_template( 'already-logged-in.php', [ 'dashboard_url' => ipfo_get_portal_page_url( 'dashboard' ) ] ) );
+			return $this->wrap( ipfo_render_template( 'already-logged-in.php', [ 'dashboard_url' => ipfo_dashboard_url_for_user() ] ), '', false );
 		}
 
 		if ( ( isset( $_GET['ipfo_reset_login'], $_GET['ipfo_reset_key'] ) || ( isset( $_POST['ipfo_action'] ) && 'reset_password' === $_POST['ipfo_action'] ) ) ) {
-			return $this->wrap( $this->render_reset_password() );
+			return $this->wrap( $this->render_reset_password(), '', false );
 		}
 
 		$error   = '';
@@ -41,7 +41,9 @@ final class LoginShortcode extends ShortcodeBase {
 					'notice'       => $notice,
 					'register_url' => ipfo_get_portal_page_url( 'register' ),
 				]
-			)
+			),
+			'',
+			false
 		);
 	}
 
@@ -77,7 +79,7 @@ final class LoginShortcode extends ShortcodeBase {
 			return $this->generic_or_specific_error( $user );
 		}
 
-		wp_safe_redirect( ipfo_get_portal_page_url( 'dashboard' ) );
+		wp_safe_redirect( ipfo_dashboard_url_for_user( $user->ID ) );
 		exit;
 	}
 

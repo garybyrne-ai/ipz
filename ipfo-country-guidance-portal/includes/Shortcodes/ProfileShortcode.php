@@ -53,7 +53,9 @@ final class ProfileShortcode extends ShortcodeBase {
 					'error'   => $error,
 				]
 			),
-			'ipfo-profile'
+			'ipfo-profile',
+			true,
+			'profile'
 		);
 	}
 

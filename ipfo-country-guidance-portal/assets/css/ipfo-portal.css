@@ -525,3 +525,139 @@
 .ipfo-business-profile__contact li:last-child { border-bottom: 0; }
 .ipfo-business-profile__social { display: flex; gap: 14px; margin-top: 14px; }
 .ipfo-business-profile__social a { font-family: var(--ipfo-font-heading); font-weight: 600; font-size: 13px; }
+
+/*
+ * Persistent role-aware sidebar (PortalNav). Only ever rendered for a
+ * logged-in user — a client gets client links, a business owner gets
+ * business links, never both and never neither — see Frontend/PortalNav.php.
+ */
+.ipfo-portal.ipfo-has-nav {
+	display: flex;
+	align-items: flex-start;
+	gap: 32px;
+}
+.ipfo-portal__main { flex: 1; min-width: 0; }
+
+.ipfo-sidebar {
+	flex: 0 0 248px;
+	position: sticky;
+	top: 24px;
+	background: var(--ipfo-white);
+	border: 1px solid var(--ipfo-border);
+	border-radius: var(--ipfo-radius);
+	box-shadow: var(--ipfo-shadow);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+.ipfo-sidebar__brand { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--ipfo-border); }
+.ipfo-sidebar__avatar {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--ipfo-primary), var(--ipfo-dark-accent));
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--ipfo-font-heading);
+	font-weight: 700;
+	font-size: 18px;
+	flex: none;
+}
+.ipfo-sidebar__who { display: flex; flex-direction: column; min-width: 0; }
+.ipfo-sidebar__who strong { font-family: var(--ipfo-font-heading); font-size: 14px; color: var(--ipfo-headline); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ipfo-sidebar__role { font-size: 12px; color: var(--ipfo-text); }
+
+.ipfo-sidebar__nav { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.ipfo-sidebar__nav a {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border-radius: var(--ipfo-radius-sm);
+	color: var(--ipfo-text) !important;
+	text-decoration: none !important;
+	font-family: var(--ipfo-font-heading);
+	font-size: 14px;
+	font-weight: 600;
+	transition: background .15s ease, color .15s ease;
+}
+.ipfo-sidebar__nav a .dashicons { font-size: 18px; width: 18px; height: 18px; opacity: .65; }
+.ipfo-sidebar__nav a:hover { background: var(--ipfo-light); color: var(--ipfo-primary) !important; }
+.ipfo-sidebar__nav a.is-active { background: linear-gradient(90deg, var(--ipfo-primary), var(--ipfo-dark-accent)); color: #fff !important; }
+.ipfo-sidebar__nav a.is-active .dashicons { opacity: 1; }
+
+.ipfo-sidebar__footer { padding-top: 16px; border-top: 1px solid var(--ipfo-border); }
+.ipfo-sidebar__logout {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--ipfo-danger) !important;
+	text-decoration: none !important;
+	font-family: var(--ipfo-font-heading);
+	font-weight: 600;
+	font-size: 14px;
+	padding: 8px 12px;
+	border-radius: var(--ipfo-radius-sm);
+}
+.ipfo-sidebar__logout:hover { background: #FDECEA; }
+
+.ipfo-nav-toggle { display: none; }
+.ipfo-nav-backdrop { display: none; }
+
+@media (max-width: 1024px) {
+	.ipfo-portal.ipfo-has-nav { display: block; }
+	.ipfo-has-nav .ipfo-portal__main { padding-top: 56px; }
+
+	.ipfo-nav-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		position: fixed;
+		/* Dropped below --ipfo-header-clearance rather than pinned to the
+		   viewport's very top-left, so it never sits under (or on top of)
+		   the theme's own mobile header/logo/menu button. */
+		top: calc(var(--ipfo-header-clearance) + 8px);
+		left: 16px;
+		z-index: 1001;
+		background: var(--ipfo-white);
+		border: 1px solid var(--ipfo-border);
+		border-radius: 999px;
+		padding: 10px 16px;
+		box-shadow: var(--ipfo-shadow);
+		cursor: pointer;
+		font-family: var(--ipfo-font-heading);
+		font-weight: 600;
+		font-size: 13px;
+		color: var(--ipfo-headline);
+	}
+
+	.ipfo-sidebar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 280px;
+		transform: translateX(-105%);
+		transition: transform .25s ease;
+		z-index: 1002;
+		border-radius: 0;
+		box-shadow: var(--ipfo-shadow-hover);
+		overflow-y: auto;
+	}
+	.ipfo-sidebar.is-open { transform: translateX(0); }
+
+	.ipfo-nav-backdrop {
+		display: block;
+		position: fixed;
+		inset: 0;
+		background: rgba(16, 10, 5, .45);
+		z-index: 1001;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity .25s ease;
+	}
+	.ipfo-nav-backdrop.is-open { opacity: 1; pointer-events: auto; }
+}

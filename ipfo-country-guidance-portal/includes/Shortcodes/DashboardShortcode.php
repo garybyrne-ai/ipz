@@ -51,7 +51,9 @@ final class DashboardShortcode extends ShortcodeBase {
 					'checklist_url'     => ipfo_get_portal_page_url( 'checklist' ),
 				]
 			),
-			'ipfo-dashboard'
+			'ipfo-dashboard',
+			true,
+			'dashboard'
 		);
 	}
 }

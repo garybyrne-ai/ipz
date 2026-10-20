@@ -42,7 +42,9 @@ final class DirectoryShortcode extends ShortcodeBase {
 					'countries'  => $service->countries(),
 				]
 			),
-			'ipfo-portal--public'
+			'ipfo-portal--public',
+			true,
+			'directory'
 		);
 	}
 }

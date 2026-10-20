@@ -42,6 +42,28 @@ function ipfo_disclaimer_text(): string {
 }
 
 /**
+ * Where a logged-in user's own dashboard lives — the IP-client Dashboard or
+ * the Business Directory owner's Dashboard, whichever matches their actual
+ * role. Centralising this is what stops the login/register flow confusing
+ * the two: every "take me to my dashboard" redirect (post-login, "already
+ * signed in" on Login/Register, nav "Dashboard" link) goes through this one
+ * function instead of each place guessing or hard-coding 'dashboard'.
+ */
+function ipfo_dashboard_url_for_user( int $user_id = 0 ): string {
+	$user_id = $user_id ?: get_current_user_id();
+	if ( ! $user_id ) {
+		return ipfo_get_portal_page_url( 'login' );
+	}
+
+	$user = get_userdata( $user_id );
+	if ( $user && in_array( \IPFO\Capabilities::BUSINESS_ROLE, (array) $user->roles, true ) ) {
+		return ipfo_get_portal_page_url( 'business-dashboard' );
+	}
+
+	return ipfo_get_portal_page_url( 'dashboard' );
+}
+
+/**
  * Renders a template file from /templates, extracting an associative array
  * of variables into local scope for that template only.
  */

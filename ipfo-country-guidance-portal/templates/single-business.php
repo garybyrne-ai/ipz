@@ -16,8 +16,11 @@ $instagram   = get_post_meta( $business->ID, '_ipfo_social_instagram', true );
 $linkedin    = get_post_meta( $business->ID, '_ipfo_social_linkedin', true );
 $credentials = get_post_meta( $business->ID, '_ipfo_credentials', true );
 $directory_url = ipfo_get_portal_page_url( 'directory' );
+$nav           = \IPFO\Frontend\PortalNav::render( 'directory' );
 ?>
-<div class="ipfo-portal ipfo-portal--public ipfo-business-profile">
+<div class="ipfo-portal ipfo-portal--public ipfo-business-profile<?php echo $nav ? ' ipfo-has-nav' : ''; ?>" data-ipfo-theme="light">
+<?php echo $nav; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+<div class="ipfo-portal__main">
 	<p><a href="<?php echo esc_url( $directory_url ); ?>">&larr; <?php esc_html_e( 'Back to the directory', 'ipfo-country-guidance-portal' ); ?></a></p>
 
 	<div class="ipfo-business-profile__header">
@@ -66,4 +69,5 @@ $directory_url = ipfo_get_portal_page_url( 'directory' );
 	</div>
 
 	<p class="ipfo-notice ipfo-notice--disclaimer" style="margin-top:24px;"><?php esc_html_e( 'This listing is provided for your convenience. Inclusion in this directory is not an endorsement or guarantee of services; please conduct your own due diligence before engaging any provider.', 'ipfo-country-guidance-portal' ); ?></p>
+</div>
 </div>

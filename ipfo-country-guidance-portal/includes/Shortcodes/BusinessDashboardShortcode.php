@@ -29,7 +29,7 @@ final class BusinessDashboardShortcode extends ShortcodeBase {
 		$listing = $service->get_my_listing( $user_id );
 
 		if ( ! $listing ) {
-			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'No business listing was found for your account. Please contact us if this seems wrong.', 'ipfo-country-guidance-portal' ) . '</div>' );
+			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'No business listing was found for your account. Please contact us if this seems wrong.', 'ipfo-country-guidance-portal' ) . '</div>', '', true, 'business-dashboard' );
 		}
 
 		$country_ids = (array) json_decode( (string) get_post_meta( $listing->ID, '_ipfo_country_ids', true ), true );
@@ -57,7 +57,10 @@ final class BusinessDashboardShortcode extends ShortcodeBase {
 					'linkedin'    => get_post_meta( $listing->ID, '_ipfo_social_linkedin', true ),
 					'credentials' => get_post_meta( $listing->ID, '_ipfo_credentials', true ),
 				]
-			)
+			),
+			'',
+			true,
+			'business-dashboard'
 		);
 	}
 

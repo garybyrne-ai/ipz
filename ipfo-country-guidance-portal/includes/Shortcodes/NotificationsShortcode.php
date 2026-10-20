@@ -36,7 +36,9 @@ final class NotificationsShortcode extends ShortcodeBase {
 
 		return $this->wrap(
 			ipfo_render_template( 'notifications.php', [ 'notifications' => $rows ] ),
-			'ipfo-notifications'
+			'ipfo-notifications',
+			true,
+			'notifications'
 		);
 	}
 }

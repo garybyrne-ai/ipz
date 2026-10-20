@@ -22,7 +22,7 @@ final class ChecklistShortcode extends ShortcodeBase {
 		$country_id = ( new AccessControlService() )->user_country_id( $user_id );
 
 		if ( ! $country_id ) {
-			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'Your checklist will appear once a country has been assigned to your account.', 'ipfo-country-guidance-portal' ) . '</div>' );
+			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'Your checklist will appear once a country has been assigned to your account.', 'ipfo-country-guidance-portal' ) . '</div>', '', true, 'checklist' );
 		}
 
 		$service = new ChecklistService();
@@ -31,7 +31,9 @@ final class ChecklistShortcode extends ShortcodeBase {
 
 		return $this->wrap(
 			ipfo_render_template( 'checklist.php', [ 'items' => $items, 'percent' => $percent ] ),
-			'ipfo-checklist'
+			'ipfo-checklist',
+			true,
+			'checklist'
 		);
 	}
 }

@@ -60,7 +60,9 @@ final class CountryGuidesShortcode extends ShortcodeBase {
 
 		return $this->wrap(
 			ipfo_render_template( 'country-guides.php', [ 'countries' => $countries ] ),
-			'ipfo-country-guides'
+			'ipfo-country-guides',
+			true,
+			'country-guides'
 		);
 	}
 }

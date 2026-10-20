@@ -44,7 +44,9 @@ final class ResourcesShortcode extends ShortcodeBase {
 
 		return $this->wrap(
 			ipfo_render_template( 'resources.php', [ 'resources' => $resources ] ),
-			'ipfo-resources'
+			'ipfo-resources',
+			true,
+			'resources'
 		);
 	}
 }

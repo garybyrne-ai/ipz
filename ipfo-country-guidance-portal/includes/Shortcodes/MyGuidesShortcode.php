@@ -44,7 +44,9 @@ final class MyGuidesShortcode extends ShortcodeBase {
 
 		return $this->wrap(
 			ipfo_render_template( 'my-guides.php', [ 'guides' => $guides ] ),
-			'ipfo-my-guides'
+			'ipfo-my-guides',
+			true,
+			'my-guides'
 		);
 	}
 }

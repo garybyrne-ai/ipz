@@ -28,14 +28,14 @@ final class GuideShortcode extends ShortcodeBase {
 		$guide_id = isset( $_GET['ipfo_guide'] ) ? absint( $_GET['ipfo_guide'] ) : absint( $atts['guide_id'] );
 
 		if ( ! $guide_id || get_post_type( $guide_id ) !== CountryGuideCPT::SLUG ) {
-			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'This guide could not be found.', 'ipfo-country-guidance-portal' ) . '</div>' );
+			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'This guide could not be found.', 'ipfo-country-guidance-portal' ) . '</div>', '', true, 'my-guides' );
 		}
 
 		$user_id = get_current_user_id();
 		$access  = new AccessControlService();
 
 		if ( ! $access->can_access_guide( $user_id, $guide_id ) ) {
-			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'You do not have access to this guide. Please contact IP Fertility Options if you believe this is incorrect.', 'ipfo-country-guidance-portal' ) . '</div>' );
+			return $this->wrap( '<div class="ipfo-empty-state">' . esc_html__( 'You do not have access to this guide. Please contact IP Fertility Options if you believe this is incorrect.', 'ipfo-country-guidance-portal' ) . '</div>', '', true, 'my-guides' );
 		}
 
 		$guide_service = new GuideService();
@@ -79,7 +79,9 @@ final class GuideShortcode extends ShortcodeBase {
 					'disclaimer'     => ipfo_disclaimer_text(),
 				]
 			),
-			'ipfo-guide'
+			'ipfo-guide',
+			true,
+			'my-guides'
 		);
 	}
 }

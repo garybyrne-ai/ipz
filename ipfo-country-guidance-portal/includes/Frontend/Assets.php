@@ -25,6 +25,8 @@ final class Assets {
 			return;
 		}
 
+		wp_enqueue_style( 'dashicons' );
+
 		wp_enqueue_style(
 			'ipfo-variables',
 			IPFO_PLUGIN_URL . 'assets/css/ipfo-variables.css',

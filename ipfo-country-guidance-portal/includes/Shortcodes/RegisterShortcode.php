@@ -14,7 +14,7 @@ final class RegisterShortcode extends ShortcodeBase {
 
 	public function render( array $atts = [] ): string {
 		if ( is_user_logged_in() ) {
-			return $this->wrap( ipfo_render_template( 'already-logged-in.php', [ 'dashboard_url' => ipfo_get_portal_page_url( 'dashboard' ) ] ) );
+			return $this->wrap( ipfo_render_template( 'already-logged-in.php', [ 'dashboard_url' => ipfo_dashboard_url_for_user() ] ), '', false );
 		}
 
 		$invite_code  = isset( $_REQUEST['ipfo_invite'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['ipfo_invite'] ) ) : '';
@@ -35,7 +35,9 @@ final class RegisterShortcode extends ShortcodeBase {
 
 		if ( $success ) {
 			return $this->wrap(
-				'<div class="ipfo-card ipfo-auth-card" style="text-align:center;"><h2>' . esc_html__( 'Thank you.', 'ipfo-country-guidance-portal' ) . '</h2><p>' . esc_html__( 'Your account is being prepared.', 'ipfo-country-guidance-portal' ) . '</p></div>'
+				'<div class="ipfo-card ipfo-auth-card" style="text-align:center;"><h2>' . esc_html__( 'Thank you.', 'ipfo-country-guidance-portal' ) . '</h2><p>' . esc_html__( 'Your account is being prepared.', 'ipfo-country-guidance-portal' ) . '</p></div>',
+				'',
+				false
 			);
 		}
 
@@ -50,7 +52,9 @@ final class RegisterShortcode extends ShortcodeBase {
 					'login_url'    => ipfo_get_portal_page_url( 'login' ),
 					'disclaimer'   => ipfo_disclaimer_text(),
 				]
-			)
+			),
+			'',
+			false
 		);
 	}
 
