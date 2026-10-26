@@ -75,7 +75,7 @@ final class RegistrationService {
 		update_user_meta( $user_id, '_ipfo_consent_at', current_time( 'mysql' ) );
 		update_user_meta( $user_id, '_ipfo_terms_accepted_at', current_time( 'mysql' ) );
 
-		$country_id = (int) ( $invitation->country_id ?? $fields['country_id'] ?? 0 );
+		$country_id = (int) ( $invitation?->country_id ?? $fields['country_id'] ?? 0 );
 		if ( $country_id ) {
 			$this->access->set_user_country( $user_id, $country_id );
 		}

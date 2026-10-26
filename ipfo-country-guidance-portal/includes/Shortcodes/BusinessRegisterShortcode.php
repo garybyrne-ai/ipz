@@ -72,7 +72,7 @@ final class BusinessRegisterShortcode extends ShortcodeBase {
 			'password'      => (string) ( $_POST['ipfo_password'] ?? '' ),
 			'phone'         => sanitize_text_field( wp_unslash( $_POST['ipfo_phone'] ?? '' ) ),
 			'category_id'   => absint( $_POST['ipfo_category_id'] ?? 0 ),
-			'country_ids'   => array_map( 'absint', (array) ( $_POST['ipfo_country_ids'] ?? [] ) ),
+			'country_ids'   => ! empty( $_POST['ipfo_serves_worldwide'] ) ? [] : array_map( 'absint', (array) ( $_POST['ipfo_country_ids'] ?? [] ) ),
 			'consent'       => ! empty( $_POST['ipfo_consent'] ),
 			'terms'         => ! empty( $_POST['ipfo_terms'] ),
 		];

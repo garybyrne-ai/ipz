@@ -43,6 +43,7 @@ final class SettingsPage {
 			update_option( 'ipfo_remove_data_on_uninstall', ! empty( $_POST['remove_data_on_uninstall'] ) ? '1' : '0' );
 			update_option( 'ipfo_default_reading_theme', 'dark' === ( $_POST['default_reading_theme'] ?? 'light' ) ? 'dark' : 'light' );
 			update_option( 'ipfo_require_business_approval', ! empty( $_POST['require_business_approval'] ) ? '1' : '0' );
+			update_option( 'ipfo_require_business_invitation', ! empty( $_POST['require_business_invitation'] ) ? '1' : '0' );
 
 			$pages = [];
 			foreach ( array_keys( self::PAGE_KEYS ) as $key ) {
@@ -91,6 +92,12 @@ final class SettingsPage {
 
 			<h2><?php esc_html_e( 'Business Directory', 'ipfo-country-guidance-portal' ); ?></h2>
 			<table class="form-table">
+				<tr>
+					<th><?php esc_html_e( 'Require Invitation to Register', 'ipfo-country-guidance-portal' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="require_business_invitation" value="1" <?php checked( get_option( 'ipfo_require_business_invitation', '0' ), '1' ); ?> /> <?php esc_html_e( 'A business must have a one-off invitation link from you to register. Leave unchecked to share one evergreen link publicly — Require Approval below still gates who goes live.', 'ipfo-country-guidance-portal' ); ?></label>
+					</td>
+				</tr>
 				<tr>
 					<th><?php esc_html_e( 'Require Approval for New Listings', 'ipfo-country-guidance-portal' ); ?></th>
 					<td><label><input type="checkbox" name="require_business_approval" value="1" <?php checked( get_option( 'ipfo_require_business_approval', '1' ), '1' ); ?> /> <?php esc_html_e( 'New business registrations stay pending in the directory until you publish them from IPFO Portal → Businesses.', 'ipfo-country-guidance-portal' ); ?></label></td>

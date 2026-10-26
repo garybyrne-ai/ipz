@@ -50,7 +50,18 @@ final class BusinessDirectoryService {
 			return $error;
 		}
 
-		$invitation = null;
+		/**
+		 * Unlike the Intended-Parent side, an invitation is optional here by
+		 * default (Settings → Business Directory → "Require Invitation to
+		 * Register") — a public directory benefits from being easy for any
+		 * business to join, with the existing admin-approval gate (new
+		 * listings land as "pending", not live) doing the moderation work
+		 * instead of a one-off link. An admin can still flip the setting
+		 * back on to go invite-only, e.g. to hand-pick who gets to list.
+		 */
+		$invitation       = null;
+		$invite_required  = '1' === get_option( 'ipfo_require_business_invitation', '0' );
+
 		if ( $invite_code && $invite_token ) {
 			$result = $this->invitations->validate( $invite_code, $invite_token );
 			if ( is_wp_error( $result ) ) {
@@ -60,7 +71,7 @@ final class BusinessDirectoryService {
 				return new WP_Error( 'ipfo_wrong_invitation_type', __( 'This invitation link is not valid for a business listing.', 'ipfo-country-guidance-portal' ) );
 			}
 			$invitation = $result;
-		} else {
+		} elseif ( $invite_required ) {
 			return new WP_Error( 'ipfo_invitation_required', __( 'A valid invitation is required to create a business listing.', 'ipfo-country-guidance-portal' ) );
 		}
 
@@ -103,7 +114,7 @@ final class BusinessDirectoryService {
 			return $post_id;
 		}
 
-		$category_id = (int) ( $invitation->business_category ?? $fields['category_id'] ?? 0 );
+		$category_id = (int) ( $invitation?->business_category ?? $fields['category_id'] ?? 0 );
 		if ( $category_id ) {
 			wp_set_post_terms( $post_id, [ $category_id ], BusinessCPT::TAXONOMY );
 		}
@@ -115,7 +126,9 @@ final class BusinessDirectoryService {
 
 		update_user_meta( $user_id, '_ipfo_business_post_id', $post_id );
 
-		$this->invitations->mark_used( $invitation, $user_id );
+		if ( $invitation ) {
+			$this->invitations->mark_used( $invitation, $user_id );
+		}
 
 		$user = get_userdata( $user_id );
 
@@ -241,10 +254,27 @@ final class BusinessDirectoryService {
 
 		$meta_query = [];
 		if ( ! empty( $filters['country'] ) ) {
+			// A business with no countries saved at all is "serves
+			// worldwide" (same convention ResourceCPT already uses for a
+			// resource with no country/guide scoping — see
+			// AccessControlService::can_access_resource()), so it matches
+			// every country filter rather than none.
 			$meta_query[] = [
-				'key'     => '_ipfo_country_ids',
-				'value'   => '"' . absint( $filters['country'] ) . '"',
-				'compare' => 'LIKE',
+				'relation' => 'OR',
+				[
+					'key'     => '_ipfo_country_ids',
+					'value'   => '"' . absint( $filters['country'] ) . '"',
+					'compare' => 'LIKE',
+				],
+				[
+					'key'     => '_ipfo_country_ids',
+					'value'   => '[]',
+					'compare' => '=',
+				],
+				[
+					'key'     => '_ipfo_country_ids',
+					'compare' => 'NOT EXISTS',
+				],
 			];
 		}
 

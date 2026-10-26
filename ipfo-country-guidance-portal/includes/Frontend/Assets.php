@@ -18,6 +18,34 @@ final class Assets {
 
 	public function register(): void {
 		add_action( 'wp_enqueue_scripts', [ $this, 'maybe_enqueue' ] );
+		add_action( 'template_redirect', [ $this, 'maybe_disable_caching' ] );
+	}
+
+	/**
+	 * Every portal page is either per-user (the sidebar nav alone makes a
+	 * client's dashboard and a business owner's dashboard render completely
+	 * different HTML for the same URL) or carries a short-lived nonce in its
+	 * form (login, register, business register) — serving either to a
+	 * different visitor from a page cache is wrong at best and a stale/dead
+	 * nonce at worst. This is also almost certainly why newly-added Business
+	 * Categories or Countries can take a while to appear on the public
+	 * registration forms on a host running a caching plugin: the page was
+	 * cached before the new term existed, and nothing told the cache to
+	 * drop it. DONOTCACHEPAGE is the de-facto standard most caching plugins
+	 * (WP Rocket, WP Super Cache, LiteSpeed Cache, W3 Total Cache) already
+	 * honour; nocache_headers() covers everything else (browser, CDN,
+	 * reverse proxy).
+	 */
+	public function maybe_disable_caching(): void {
+		if ( ! $this->current_page_uses_portal() ) {
+			return;
+		}
+
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+
+		nocache_headers();
 	}
 
 	public function maybe_enqueue(): void {

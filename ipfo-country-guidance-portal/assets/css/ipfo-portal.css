@@ -526,6 +526,42 @@
 .ipfo-business-profile__social { display: flex; gap: 14px; margin-top: 14px; }
 .ipfo-business-profile__social a { font-family: var(--ipfo-font-heading); font-weight: 600; font-size: 13px; }
 
+/* Country picker (business register / business dashboard) */
+.ipfo-worldwide-toggle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 4px 0 12px;
+	padding: 10px 14px;
+	background: var(--ipfo-light);
+	border-radius: var(--ipfo-radius-sm);
+	font-weight: 600;
+	font-size: 14px;
+}
+.ipfo-worldwide-toggle input { margin: 0; }
+
+.ipfo-country-checklist {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 4px 12px;
+	max-height: 220px;
+	overflow-y: auto;
+	padding: 12px 14px;
+	border: 1px solid var(--ipfo-border);
+	border-radius: var(--ipfo-radius-sm);
+	transition: opacity .15s ease;
+}
+.ipfo-country-checklist__item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	padding: 4px 0;
+	cursor: pointer;
+}
+.ipfo-country-checklist__item input { margin: 0; accent-color: var(--ipfo-primary); }
+.ipfo-country-checklist.is-disabled { opacity: .5; pointer-events: none; }
+
 /*
  * Persistent role-aware sidebar (PortalNav). Only ever rendered for a
  * logged-in user — a client gets client links, a business owner gets

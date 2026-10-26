@@ -63,24 +63,25 @@ $status_labels = [
 			<textarea id="ipfo_description" name="ipfo_description" rows="5" class="large-text"><?php echo esc_textarea( $listing->post_content ); ?></textarea>
 		</div>
 
-		<div class="ipfo-grid ipfo-grid--2">
-			<div class="ipfo-field">
-				<label for="ipfo_category_id"><?php esc_html_e( 'Category', 'ipfo-country-guidance-portal' ); ?></label>
-				<select id="ipfo_category_id" name="ipfo_category_id" required>
-					<?php foreach ( $categories as $term ) : ?>
-						<option value="<?php echo esc_attr( $term->term_id ); ?>" <?php selected( $category_id, $term->term_id ); ?>><?php echo esc_html( $term->name ); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</div>
-			<div class="ipfo-field">
-				<label for="ipfo_country_ids"><?php esc_html_e( 'Countries You Serve', 'ipfo-country-guidance-portal' ); ?></label>
-				<select id="ipfo_country_ids" name="ipfo_country_ids[]" multiple size="4">
-					<?php foreach ( $countries as $country ) : ?>
-						<option value="<?php echo esc_attr( $country->id ); ?>" <?php selected( in_array( (int) $country->id, $country_ids, true ) ); ?>><?php echo esc_html( $country->name ); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</div>
+		<div class="ipfo-field">
+			<label for="ipfo_category_id"><?php esc_html_e( 'Category', 'ipfo-country-guidance-portal' ); ?></label>
+			<select id="ipfo_category_id" name="ipfo_category_id" required>
+				<?php foreach ( $categories as $term ) : ?>
+					<option value="<?php echo esc_attr( $term->term_id ); ?>" <?php selected( $category_id, $term->term_id ); ?>><?php echo esc_html( $term->name ); ?></option>
+				<?php endforeach; ?>
+			</select>
 		</div>
+
+		<?php
+		echo ipfo_render_template(
+			'partials/country-picker.php',
+			[
+				'countries'            => $countries,
+				'selected_country_ids' => $country_ids,
+				'worldwide_checked'    => empty( $country_ids ),
+			]
+		);
+		?>
 
 		<div class="ipfo-field">
 			<label for="ipfo_logo"><?php esc_html_e( 'Logo / Photo', 'ipfo-country-guidance-portal' ); ?></label>

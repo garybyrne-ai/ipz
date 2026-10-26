@@ -59,6 +59,7 @@ $options = [
 	'ipfo_require_email_verification',
 	'ipfo_require_admin_approval',
 	'ipfo_require_business_approval',
+	'ipfo_require_business_invitation',
 	'ipfo_remove_data_on_uninstall',
 	'ipfo_default_reading_theme',
 	'ipfo_portal_pages',

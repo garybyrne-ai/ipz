@@ -172,6 +172,26 @@
 		} );
 	}
 
+	/* ---------- Business directory: "serves worldwide" country toggle ---------- */
+	function initWorldwideToggle() {
+		document.querySelectorAll( '[data-ipfo-worldwide-toggle]' ).forEach( function ( toggle ) {
+			var field = toggle.closest( '.ipfo-field' );
+			var list  = field ? field.querySelector( '[data-ipfo-country-checklist]' ) : null;
+			if ( ! list ) { return; }
+
+			function sync() {
+				var checked = toggle.checked;
+				list.classList.toggle( 'is-disabled', checked );
+				list.querySelectorAll( 'input[type="checkbox"]' ).forEach( function ( cb ) {
+					cb.disabled = checked;
+				} );
+			}
+
+			toggle.addEventListener( 'change', sync );
+			sync();
+		} );
+	}
+
 	/* ---------- Sidebar navigation (mobile slide-out drawer) ---------- */
 	function initNav() {
 		var toggle   = document.querySelector( '[data-ipfo-nav-toggle]' );
@@ -206,5 +226,6 @@
 		initChecklist();
 		initFaq();
 		initNav();
+		initWorldwideToggle();
 	} );
 } )();

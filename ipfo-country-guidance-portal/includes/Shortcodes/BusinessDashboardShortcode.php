@@ -74,7 +74,7 @@ final class BusinessDashboardShortcode extends ShortcodeBase {
 			'business_name' => sanitize_text_field( wp_unslash( $_POST['ipfo_business_name'] ?? '' ) ),
 			'description'   => wp_kses_post( wp_unslash( $_POST['ipfo_description'] ?? '' ) ),
 			'category_id'   => absint( $_POST['ipfo_category_id'] ?? 0 ),
-			'country_ids'   => array_map( 'absint', (array) ( $_POST['ipfo_country_ids'] ?? [] ) ),
+			'country_ids'   => ! empty( $_POST['ipfo_serves_worldwide'] ) ? [] : array_map( 'absint', (array) ( $_POST['ipfo_country_ids'] ?? [] ) ),
 			'phone'         => sanitize_text_field( wp_unslash( $_POST['ipfo_phone'] ?? '' ) ),
 			'email'         => sanitize_email( wp_unslash( $_POST['ipfo_email'] ?? '' ) ),
 			'website'       => esc_url_raw( wp_unslash( $_POST['ipfo_website'] ?? '' ) ),

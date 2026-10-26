@@ -17,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<?php if ( $invite_code ) : ?>
 		<p class="ipfo-form-success"><?php esc_html_e( "You're registering with a secure invitation.", 'ipfo-country-guidance-portal' ); ?> <span class="ipfo-badge"><?php echo esc_html( $invite_code ); ?></span></p>
-	<?php else : ?>
-		<p class="ipfo-form-error"><?php esc_html_e( 'A valid invitation link is required to create a listing. Please use the link we emailed you.', 'ipfo-country-guidance-portal' ); ?></p>
 	<?php endif; ?>
 
 	<?php if ( $error ) : ?>
@@ -67,14 +65,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</select>
 		</div>
 
-		<div class="ipfo-field">
-			<label for="ipfo_country_ids"><?php esc_html_e( 'Countries You Serve', 'ipfo-country-guidance-portal' ); ?></label>
-			<select id="ipfo_country_ids" name="ipfo_country_ids[]" multiple size="5">
-				<?php foreach ( $countries as $country ) : ?>
-					<option value="<?php echo esc_attr( $country->id ); ?>"><?php echo esc_html( $country->name ); ?></option>
-				<?php endforeach; ?>
-			</select>
-		</div>
+		<?php
+		echo ipfo_render_template(
+			'partials/country-picker.php',
+			[
+				'countries'             => $countries,
+				'selected_country_ids'  => [],
+				'worldwide_checked'     => false,
+			]
+		);
+		?>
 
 		<div class="ipfo-field">
 			<label for="ipfo_phone"><?php esc_html_e( 'Phone', 'ipfo-country-guidance-portal' ); ?></label>

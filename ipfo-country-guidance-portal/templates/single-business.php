@@ -34,6 +34,8 @@ $nav           = \IPFO\Frontend\PortalNav::render( 'directory' );
 			<?php endif; ?>
 			<?php if ( $countries ) : ?>
 				<p><?php esc_html_e( 'Serves:', 'ipfo-country-guidance-portal' ); ?> <?php echo esc_html( implode( ', ', wp_list_pluck( $countries, 'name' ) ) ); ?></p>
+			<?php else : ?>
+				<p><?php esc_html_e( 'Serves: Worldwide', 'ipfo-country-guidance-portal' ); ?></p>
 			<?php endif; ?>
 		</div>
 	</div>

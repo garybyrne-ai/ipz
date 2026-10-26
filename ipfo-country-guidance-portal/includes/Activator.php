@@ -78,6 +78,7 @@ final class Activator {
 			]
 		);
 		add_option( 'ipfo_require_business_approval', '1' );
+		add_option( 'ipfo_require_business_invitation', '0' );
 	}
 
 	/**
